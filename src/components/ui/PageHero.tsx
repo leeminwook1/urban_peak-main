@@ -43,7 +43,7 @@ export default function PageHero({
   const hasBanner = !!bannerImage;
 
   return (
-    <section className="relative overflow-hidden border-b border-black bg-[#F5F5F5] px-6 pb-[90px] pt-[100px] md:pt-[110px]">
+    <section className="hand-line-b relative bg-[#F5F5F5] px-6 pb-[90px] pt-[100px] md:pt-[110px]">
       {hasBanner ? (
         <>
           <Image src={bannerImage} alt={title} fill className="object-cover" priority />

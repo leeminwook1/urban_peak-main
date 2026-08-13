@@ -109,7 +109,7 @@ export default function StoryPage() {
       <section className="px-6 pb-[110px]">
         <div className="mx-auto max-w-[1400px]">
           <Stamp>TIMELINE — 어반피크의 여정</Stamp>
-          <div className="mt-8 border-t border-black">
+          <div className="hand-line-t mt-8">
             {timeline.map((item, i) => (
               <AnimatedSection key={item.num} delay={i * 0.1}>
                 <div className="grid grid-cols-[48px_1fr] gap-4 border-b border-dashed border-black py-9 transition-colors hover:bg-[#F5F5F5] md:grid-cols-[96px_1fr_1.5fr] md:gap-7">
@@ -130,7 +130,7 @@ export default function StoryPage() {
       </section>
 
       {/* 가치 */}
-      <section className="border-t border-black bg-[#81F211] px-6 py-[100px]">
+      <section className="hand-line-t bg-[#81F211] px-6 py-[100px]">
         <div className="mx-auto max-w-[1400px]">
           <Stamp variant="white">PRINCIPLES — 추구하는 가치</Stamp>
           <div className="mt-9 grid gap-[18px] md:grid-cols-3">
@@ -152,7 +152,7 @@ export default function StoryPage() {
       </section>
 
       {/* 키워드 */}
-      <section className="border-t border-black px-6 py-[100px]">
+      <section className="hand-line-t px-6 py-[100px]">
         <div className="mx-auto max-w-[1400px]">
           <Stamp>KEYWORDS</Stamp>
           <div className="mt-[30px] flex flex-wrap gap-2.5">

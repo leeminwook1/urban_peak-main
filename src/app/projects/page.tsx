@@ -80,7 +80,7 @@ export default function ProjectsPage() {
               </p>
             </div>
           ) : (
-            <div className="mt-8 border-t border-black">
+            <div className="hand-line-t mt-8">
               {displayedProjects.map((project, index) => (
                 <AnimatedSection key={project.id} delay={index * 0.06}>
                   <div

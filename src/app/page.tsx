@@ -6,15 +6,12 @@ import Link from "next/link";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import ProjectModal, { ModalProject } from "@/components/ui/ProjectModal";
 import Stamp from "@/components/ui/Stamp";
-import Marquee from "@/components/ui/Marquee";
 import HeroVideoLoop from "@/components/ui/HeroVideoLoop";
 import { defaultProjects, defaultTeamMembers } from "@/lib/data";
 
 interface Project { id: number | string; tag: string; title: string; category: string; description: string; symbol_url: string; thumbnail_url?: string | null; gallery_images?: string | null; display_order: number; status?: string; }
 interface TeamMember { id: number | string; role: string; name: string; description: string; profile_image?: string | null; display_order: number; }
 interface MerchandiseItem { id: number | string; name: string; description: string; image_url: string | null; images: string | null; display_order: number; }
-
-const TICKER_WORDS = ["NOW BOOKING", "SEOUL 2019—", "공연 · 기록 · 전시 · 클래스", "OPEN CALL", "CULTURE PLANNING", "꼭대기에서 만나요"];
 
 const TILT_CLASSES = [
   "-rotate-[1.4deg]",
@@ -47,7 +44,7 @@ function CharLine({ text, outline = false, startDelay = 0, trailing }: { text: s
 
 function HeroSection() {
   return (
-    <section className="relative flex min-h-[calc(100vh-63px)] flex-col justify-center overflow-hidden border-b border-black bg-[#F5F5F5] px-6 pb-28 pt-24 md:pt-20">
+    <section className="hand-line-b hand-line-in relative flex min-h-[calc(100vh-63px)] flex-col justify-center overflow-hidden bg-[#F5F5F5] px-6 pb-28 pt-24 md:pt-20">
       <HeroVideoLoop />
       <div className="hatch-bg-anim absolute inset-0" aria-hidden="true" />
       <div className="lime-glow absolute inset-0" aria-hidden="true" />
@@ -218,7 +215,7 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
         {tabProjects.length === 0 ? (
           <EmptyRows message={activeTab === "upcoming" ? "진행 예정 프로젝트가 없습니다." : "지난 프로젝트가 없습니다."} />
         ) : (
-          <div className="mt-9 border-t border-black">
+          <div className="hand-line-t mt-9">
             {tabProjects.map((project, index) => (
               <ProjectRow key={project.id} project={project} index={index} onClick={() => setSelected(project)} />
             ))}
@@ -233,7 +230,7 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
 
 function TeamSection({ members }: { members: TeamMember[] }) {
   return (
-    <section id="team" className="border-t border-black bg-[#81F211] px-6 pb-[120px] pt-[110px]">
+    <section id="team" className="hand-line-t bg-[#81F211] px-6 pb-[120px] pt-[110px]">
       <div className="mx-auto max-w-[1400px]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <AnimatedSection>
@@ -293,7 +290,7 @@ function TeamSection({ members }: { members: TeamMember[] }) {
 
 function MerchandiseSection({ items }: { items: MerchandiseItem[] }) {
   return (
-    <section className="border-t border-black px-6 py-24 md:py-[110px]">
+    <section className="hand-line-t px-6 py-24 md:py-[110px]">
       <div className="mx-auto max-w-[1400px]">
         <AnimatedSection>
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -391,7 +388,6 @@ export default function HomePage() {
       <HeroSection />
       <ProjectsSection projects={projects} />
       <TeamSection members={members} />
-      <Marquee items={TICKER_WORDS} variant="light" />
       {merchandise.length > 0 && <MerchandiseSection items={merchandise} />}
       <ContactCTA />
     </>

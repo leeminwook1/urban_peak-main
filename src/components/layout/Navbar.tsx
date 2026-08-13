@@ -18,7 +18,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed left-0 right-0 top-[5px] z-50 border-b border-black bg-white">
+    <nav className="hand-line-b fixed left-0 right-0 top-[5px] z-50 bg-white">
       <div className="flex h-[58px] items-center justify-between gap-6 px-5 md:px-6">
         <Link href="/" className="flex flex-shrink-0 items-center gap-3.5" data-magnet>
           <Image
