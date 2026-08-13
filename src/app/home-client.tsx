@@ -7,6 +7,7 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import ProjectModal, { ModalProject } from "@/components/ui/ProjectModal";
 import Stamp from "@/components/ui/Stamp";
 import HeroVideoLoop from "@/components/ui/HeroVideoLoop";
+import SketchIcon, { SketchIconKind } from "@/components/ui/SketchIcon";
 import { defaultProjects, defaultTeamMembers } from "@/lib/data";
 
 interface Project { id: number | string; tag: string; title: string; category: string; description: string; symbol_url: string; thumbnail_url?: string | null; gallery_images?: string | null; display_order: number; status?: string; }
@@ -21,6 +22,31 @@ const TILT_CLASSES = [
   "-rotate-1",
   "rotate-[0.7deg]",
 ];
+
+/** 영문 닉네임이면 사람 아이콘, 한글 팀명이면 팀 성격에 맞는 손그림 아이콘 */
+function memberIconKind(name: string, role: string): SketchIconKind {
+  if (/^[A-Za-z0-9 .'\-_]+$/.test(name.trim())) return "person";
+  const byName: Array<[RegExp, SketchIconKind]> = [
+    [/기획/, "plan"],
+    [/영상/, "video"],
+    [/디자인/, "design"],
+    [/음향|믹싱|사운드/, "sound"],
+    [/공연/, "stage"],
+    [/문예|창작/, "writing"],
+    [/사진/, "photo"],
+    [/방송/, "broadcast"],
+  ];
+  for (const [re, kind] of byName) if (re.test(name)) return kind;
+  const byRole: Array<[RegExp, SketchIconKind]> = [
+    [/PLANNER|DIRECTOR/i, "plan"],
+    [/VISUAL|PHOTO|RECORDER|STORYTELLER/i, "photo"],
+    [/SOUND/i, "sound"],
+    [/WORD/i, "writing"],
+    [/CURATOR|SCENE/i, "stage"],
+  ];
+  for (const [re, kind] of byRole) if (re.test(role)) return kind;
+  return "peak";
+}
 
 function CharLine({ text, outline = false, startDelay = 0, trailing }: { text: string; outline?: boolean; startDelay?: number; trailing?: React.ReactNode }) {
   const chars = Array.from(text);
@@ -249,9 +275,10 @@ function TeamSection({ members }: { members: TeamMember[] }) {
               >
                 <span className="dash-strip absolute left-0 right-0 top-0 h-1.5" aria-hidden="true" />
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-outline-thin text-[64px] font-extrabold leading-none tracking-[-0.06em] transition-colors group-hover:text-[#81F211]" style={{ WebkitTextStroke: "1.5px #000" }}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                  <SketchIcon
+                    kind={memberIconKind(member.name, member.role)}
+                    className="h-14 w-14 -rotate-2 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+                  />
                   <span className="mt-1 border border-black bg-[#81F211] px-2 py-1 text-right text-[9px] font-extrabold leading-relaxed tracking-[0.18em] text-black">
                     {member.role}
                   </span>
