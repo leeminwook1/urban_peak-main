@@ -1,42 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Stamp from "@/components/ui/Stamp";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
-interface PageSetting {
-  title: string;
-  subtitle: string;
-  banner_image: string | null;
+export interface PageSetting {
+  title?: string | null;
+  subtitle?: string | null;
+  banner_image?: string | null;
 }
 
 interface PageHeroProps {
-  pageKey: string;
+  setting?: PageSetting | null;
   defaultTitle: string;
   defaultSubtitle?: string;
   labelLeft: string;
-  labelRight: string;
-  minHeight?: string;
+  labelRight?: string;
 }
 
 export default function PageHero({
-  pageKey,
+  setting,
   defaultTitle,
   defaultSubtitle,
   labelLeft,
 }: PageHeroProps) {
-  const [setting, setSetting] = useState<PageSetting | null>(null);
-
-  useEffect(() => {
-    fetch(`/api/page-settings/${pageKey}`)
-      .then(r => r.json())
-      .then(d => { if (d) setSetting(d); })
-      .catch(() => {});
-  }, [pageKey]);
-
   const title = setting?.title || defaultTitle;
   const subtitle = setting?.subtitle || defaultSubtitle;
   const bannerImage = setting?.banner_image;
@@ -46,7 +35,7 @@ export default function PageHero({
     <section className="hand-line-b relative bg-[#F5F5F5] px-6 pb-[90px] pt-[100px] md:pt-[110px]">
       {hasBanner ? (
         <>
-          <Image src={bannerImage} alt={title} fill className="object-cover" priority />
+          <Image src={bannerImage!} alt={title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-black/45" />
         </>
       ) : (
