@@ -96,6 +96,28 @@ export default function AdminPage() {
             팀원 정보를 추가, 수정, 삭제합니다.
           </p>
         </Link>
+        <Link
+          href="/admin/merchandise"
+          className="group rounded-xl border border-[#e5e0d8] bg-white p-8 transition-all hover:border-[#e8521a]/40 hover:shadow-md"
+        >
+          <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a] group-hover:text-[#e8521a]">
+            굿즈 관리
+          </h2>
+          <p className="text-sm text-[#6b6b6b]">
+            굿즈 상품을 추가, 수정, 삭제합니다.
+          </p>
+        </Link>
+        <Link
+          href="/admin/pages"
+          className="group rounded-xl border border-[#e5e0d8] bg-white p-8 transition-all hover:border-[#e8521a]/40 hover:shadow-md"
+        >
+          <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a] group-hover:text-[#e8521a]">
+            페이지 설정
+          </h2>
+          <p className="text-sm text-[#6b6b6b]">
+            각 페이지 배너 이미지와 타이틀을 수정합니다.
+          </p>
+        </Link>
       </div>
     </div>
   );

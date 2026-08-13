@@ -13,6 +13,7 @@ interface Project {
   thumbnail_url: string;
   gallery_images: string;
   display_order: number;
+  status: string;
 }
 
 const SYMBOL_OPTIONS = [
@@ -24,7 +25,7 @@ const SYMBOL_OPTIONS = [
 
 const EMPTY: Omit<Project, "id"> = {
   tag: "", title: "", category: "", description: "",
-  symbol_url: "/images/logos/symbol-orange.png", thumbnail_url: "", gallery_images: "[]", display_order: 0,
+  symbol_url: "/images/logos/symbol-orange.png", thumbnail_url: "", gallery_images: "[]", display_order: 0, status: "upcoming",
 };
 
 export default function AdminProjectsPage() {
@@ -72,7 +73,7 @@ export default function AdminProjectsPage() {
 
   function openEdit(p: Project) {
     setEditingId(p.id);
-    setForm({ tag: p.tag, title: p.title, category: p.category, description: p.description, symbol_url: p.symbol_url, thumbnail_url: p.thumbnail_url ?? "", gallery_images: p.gallery_images ?? "[]", display_order: p.display_order });
+    setForm({ tag: p.tag, title: p.title, category: p.category, description: p.description, symbol_url: p.symbol_url, thumbnail_url: p.thumbnail_url ?? "", gallery_images: p.gallery_images ?? "[]", display_order: p.display_order, status: p.status ?? "upcoming" });
     try {
       setGalleryImages(JSON.parse(p.gallery_images || "[]"));
     } catch {
@@ -101,65 +102,46 @@ export default function AdminProjectsPage() {
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드 가능합니다.');
-      return;
-    }
-
+    if (!file.type.startsWith('image/')) { alert('이미지 파일만 업로드 가능합니다.'); return; }
     setUploading(true);
     try {
+      const { resizeImage } = await import('@/lib/resizeImage');
+      const resized = await resizeImage(file);
       const formData = new FormData();
-      formData.append('file', file);
-      
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
+      formData.append('file', resized);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
       if (!res.ok) throw new Error('업로드 실패');
-      
       const { url } = await res.json();
       setForm(f => ({ ...f, thumbnail_url: url }));
     } catch (err) {
       alert('이미지 업로드에 실패했습니다.');
       console.error(err);
-    } finally {
-      setUploading(false);
-    }
+    } finally { setUploading(false); }
   }
 
   async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-
     setUploading(true);
     try {
+      const { resizeImage } = await import('@/lib/resizeImage');
       const uploadPromises = Array.from(files).map(async (file) => {
         if (!file.type.startsWith('image/')) return null;
-        
+        const resized = await resizeImage(file);
         const formData = new FormData();
-        formData.append('file', file);
-        
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        
+        formData.append('file', resized);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
         if (!res.ok) return null;
         const { url } = await res.json();
         return url;
       });
-
       const urls = await Promise.all(uploadPromises);
       const validUrls = urls.filter((url): url is string => url !== null);
       setGalleryImages(prev => [...prev, ...validUrls]);
     } catch (err) {
       alert('이미지 업로드에 실패했습니다.');
       console.error(err);
-    } finally {
-      setUploading(false);
-    }
+    } finally { setUploading(false); }
   }
 
   function removeGalleryImage(index: number) {
@@ -190,7 +172,7 @@ export default function AdminProjectsPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-8 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold text-[#1a1a1a]">{editingId !== null ? "기획안 수정" : "새 기획안"}</h2>
               <button onClick={() => setShowForm(false)} className="text-[#8a8a8a] hover:text-[#1a1a1a]"><X size={20} /></button>
@@ -262,6 +244,14 @@ export default function AdminProjectsPage() {
                 </select>
               </div>
               {field("순서", "display_order", "number")}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[#6b6b6b]">상태</label>
+                <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+                  className="w-full rounded-xl border border-[#e5e0d8] bg-[#faf8f5] px-4 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#1a1a2e]">
+                  <option value="upcoming">진행 예정 · 현재 진행</option>
+                  <option value="past">지난 프로젝트</option>
+                </select>
+              </div>
             </div>
             <div className="mt-6 flex gap-3">
               <button onClick={handleSave} disabled={saving} className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#1a1a2e] py-3 text-sm font-medium text-white disabled:opacity-50 hover:opacity-80">
@@ -282,6 +272,9 @@ export default function AdminProjectsPage() {
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#a0a0a0]">{p.tag}</span>
                 <p className="mt-0.5 font-bold text-[#1a1a1a]">{p.title}</p>
                 <p className="text-xs text-[#8a8a8a]">{p.category}</p>
+                <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${p.status === 'past' ? 'bg-[#f0ebe3] text-[#8a8a8a]' : 'bg-[#1a1a2e]/10 text-[#1a1a2e]'}`}>
+                  {p.status === 'past' ? '지난 프로젝트' : '진행 예정 · 현재'}
+                </span>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => openEdit(p)} className="rounded-xl border border-[#e5e0d8] p-2 text-[#6b6b6b] hover:border-[#1a1a2e] hover:text-[#1a1a2e]"><Pencil size={15} /></button>

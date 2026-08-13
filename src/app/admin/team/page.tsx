@@ -67,8 +67,10 @@ export default function AdminTeamPage() {
 
     setUploading(true);
     try {
+      const { resizeImage } = await import('@/lib/resizeImage');
+      const resized = await resizeImage(file);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', resized);
       
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -114,7 +116,7 @@ export default function AdminTeamPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-8 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold text-[#1a1a1a]">{editingId !== null ? "팀원 수정" : "새 팀원"}</h2>
               <button onClick={() => setShowForm(false)} className="text-[#8a8a8a] hover:text-[#1a1a1a]"><X size={20} /></button>

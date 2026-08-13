@@ -14,35 +14,112 @@
   }
 
   body {
-    background-color: #f0ebe3;
-    color: #1a1a1a;
+    background-color: #ffffff;
+    color: #000000;
     font-family: var(--font-pretendard), 'Pretendard Variable', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   ::selection {
-    background-color: #1a1a1a;
-    color: #f0ebe3;
+    background-color: #81F211;
+    color: #000;
   }
 }
 
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-reverse {
+  to { transform: rotate(-360deg); }
+}
+@keyframes marq {
+  to { transform: translateX(-50%); }
+}
+@keyframes marqR {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+@keyframes vslide {
+  to { transform: translateX(15px); }
+}
+@keyframes char-in {
+  0% { opacity: 0; transform: translateY(110%) rotate(6deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+@keyframes wave-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-16px) rotate(2deg); }
+}
+
 @layer utilities {
-  /* 레퍼런스의 파스텔 그라디언트: 좌우 라벤더/퍼플, 중앙 크림 웜톤 */
-  .hero-gradient {
-    background:
-      radial-gradient(ellipse 55% 70% at -8% 30%, rgba(196, 185, 210, 0.55) 0%, transparent 65%),
-      radial-gradient(ellipse 55% 70% at 108% 30%, rgba(185, 196, 218, 0.55) 0%, transparent 65%),
-      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(232, 224, 212, 0.9) 0%, transparent 75%),
-      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(222, 215, 205, 0.6) 0%, transparent 70%),
-      #f0ebe3;
+  .anim-spin-slow { animation: spin-slow 8s linear infinite; }
+  .anim-spin-reverse { animation: spin-reverse 10s linear infinite; }
+  .anim-blink { animation: blink-dot 1.6s ease-in-out infinite; }
+  .anim-wave { animation: wave-y 2s ease-in-out infinite; }
+  .anim-floaty { animation: floaty 5s ease-in-out infinite; }
+  .anim-marq { animation: marq 24s linear infinite; }
+  .anim-marq-r { animation: marqR 28s linear infinite; }
+
+  /* 사선 해칭 배경 */
+  .hatch-bg {
+    background: repeating-linear-gradient(106deg, rgba(0, 0, 0, 0.03) 0 2px, transparent 2px 15px);
+  }
+  .hatch-bg-anim {
+    background: repeating-linear-gradient(106deg, rgba(0, 0, 0, 0.035) 0 2px, transparent 2px 15px);
+    animation: vslide 2.5s linear infinite;
+  }
+  /* 라임 글로우 */
+  .lime-glow {
+    background: radial-gradient(ellipse 68% 58% at 50% 60%, rgba(129, 242, 17, 0.2) 0%, transparent 68%);
+  }
+  /* 체크무늬 placeholder */
+  .placeholder-stripes {
+    background: repeating-linear-gradient(45deg, #EFEFEF 0 8px, #F7F7F7 8px 16px);
+  }
+  /* 상단 점선 스트립 */
+  .dash-strip {
+    background: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 12px);
   }
 
-  .story-gradient {
-    background:
-      radial-gradient(ellipse 55% 70% at -8% 40%, rgba(196, 185, 210, 0.5) 0%, transparent 65%),
-      radial-gradient(ellipse 55% 70% at 108% 40%, rgba(185, 196, 218, 0.5) 0%, transparent 65%),
-      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(232, 224, 212, 0.8) 0%, transparent 70%),
-      #f0ebe3;
+  .char-anim {
+    display: inline-block;
+    opacity: 0;
+    animation: char-in 0.7s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+  }
+
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px #000;
+  }
+  .text-outline-thin {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-spin-slow,
+  .anim-spin-reverse,
+  .anim-blink,
+  .anim-wave,
+  .anim-floaty,
+  .anim-marq,
+  .anim-marq-r,
+  .hatch-bg-anim {
+    animation: none;
+  }
+  .char-anim {
+    animation: none;
+    opacity: 1;
   }
 }

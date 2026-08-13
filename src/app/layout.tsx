@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import DesignEffects from "@/components/ui/DesignEffects";
 import "./globals.css";
 
 const pretendard = localFont({
@@ -80,8 +81,9 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.variable}>
       <body className="min-h-screen antialiased">
+        <DesignEffects />
         <Navbar />
-        <main className="pt-16">{children}</main>
+        <main className="pt-[63px]">{children}</main>
         <Footer />
       </body>
     </html>

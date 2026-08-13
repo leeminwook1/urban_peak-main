@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import ProjectModal, { ModalProject } from "@/components/ui/ProjectModal";
+import PageHero from "@/components/ui/PageHero";
 import { defaultProjects } from "@/lib/data";
 
 interface Project {
@@ -17,15 +16,15 @@ interface Project {
   thumbnail_url?: string | null;
   gallery_images?: string | null;
   display_order: number;
+  status?: string;
 }
-
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>(
     defaultProjects as Project[],
   );
   const [selected, setSelected] = useState<Project | null>(null);
+  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
 
   useEffect(() => {
     fetch("/api/projects")
@@ -36,141 +35,82 @@ export default function ProjectsPage() {
       .catch(() => {});
   }, []);
 
+  const upcomingProjects = projects.filter(p => !p.status || p.status === "upcoming");
+  const pastProjects = projects.filter(p => p.status === "past");
+  const displayedProjects = activeTab === "upcoming" ? upcomingProjects : pastProjects;
+
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="hero-gradient relative flex min-h-[45vh] flex-col overflow-hidden">
-        {/* top edge bar */}
-        <div className="flex items-center justify-between px-8 pt-6 md:px-14 lg:px-20">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#1a1a1a]/35">
-            Projects
-          </span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#1a1a1a]/35">
-            진행 프로젝트
-          </span>
-        </div>
+      <PageHero
+        pageKey="projects"
+        defaultTitle={"어반피크가 함께 하는\n프로젝트"}
+        defaultSubtitle="어반피크가 기획하는 독립 문화 프로젝트"
+        labelLeft="Projects"
+        labelRight="진행 프로젝트"
+      />
 
-        {/* animated top rule */}
-        <motion.div
-          className="mx-8 mt-3 h-px origin-left bg-[#1a1a1a]/10 md:mx-14 lg:mx-20"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, ease }}
-        />
+      <section className="px-6 pb-[130px] pt-20">
+        <div className="mx-auto max-w-[1400px]">
+          {/* 탭 */}
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={() => setActiveTab("upcoming")}
+              data-magnet
+              className={`border border-black px-[22px] py-2.5 text-xs font-extrabold tracking-[0.1em] text-black transition-colors ${activeTab === "upcoming" ? "bg-[#81F211]" : "bg-white"}`}
+            >
+              진행 예정 · 현재 ({upcomingProjects.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("past")}
+              data-magnet
+              className={`border border-black px-[22px] py-2.5 text-xs font-extrabold tracking-[0.1em] text-black transition-colors ${activeTab === "past" ? "bg-[#81F211]" : "bg-white"}`}
+            >
+              지난 프로젝트 ({pastProjects.length})
+            </button>
+          </div>
+          <p className="mt-[18px] hidden font-mono text-[13px] text-[#666666] md:block">
+            HOVER A ROW — 장면이 따라옵니다
+          </p>
 
-        {/* main content */}
-        <div className="flex flex-1 flex-col justify-center px-8 py-14 md:px-14 md:py-20 lg:px-20">
-          <motion.h1
-            className="text-[2.6rem] font-bold leading-[1.08] tracking-[-0.035em] text-[#111] md:text-[3.6rem] lg:text-[4.5rem]"
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.15 }}
-          >
-            어반피크가 함께 하는
-            <br />
-            프로젝트
-          </motion.h1>
-
-          <motion.p
-            className="mt-5 text-[14px] text-[#6b6b6b]"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.35 }}
-          >
-            어반피크가 기획하는 독립 문화 프로젝트
-          </motion.p>
-
-          {/* short accent rule */}
-          <motion.div
-            className="mt-7 h-px w-10 origin-left bg-[#1a1a1a]/30"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, ease, delay: 0.55 }}
-          />
-        </div>
-
-        {/* animated bottom rule */}
-        <motion.div
-          className="mx-8 mb-0 h-px origin-left bg-[#1a1a1a]/10 md:mx-14 lg:mx-20"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, ease, delay: 0.3 }}
-        />
-      </section>
-
-      {/* ── Project cards ────────────────────────────────── */}
-      <section className="px-8 py-16 md:px-14 md:py-24 lg:px-20">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project, index) => (
-              <AnimatedSection key={project.id} delay={index * 0.08}>
-                <div
-                  className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                  onClick={() => setSelected(project)}
-                >
-                  {/* dark top panel */}
-                  <div className="relative flex h-56 flex-col justify-between bg-[#1a1a2e] p-7">
-                    {project.thumbnail_url && (
-                      <Image
-                        src={project.thumbnail_url}
-                        alt={project.title}
-                        fill
-                        className="object-cover opacity-60"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-[#1a1a2e]/60 to-transparent" />
-                    <span className="relative z-10 text-[10px] font-semibold uppercase tracking-widest text-white/30">
-                      {project.tag}
+          {displayedProjects.length === 0 ? (
+            <div className="mt-8 border border-dashed border-black p-16 text-center">
+              <span className="anim-spin-slow inline-block text-3xl text-[#81F211]">✳</span>
+              <p className="mt-3.5 text-sm font-semibold text-[#666666]">
+                {activeTab === "upcoming" ? "진행 예정 프로젝트가 없습니다." : "지난 프로젝트가 없습니다."}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 border-t border-black">
+              {displayedProjects.map((project, index) => (
+                <AnimatedSection key={project.id} delay={index * 0.06}>
+                  <div
+                    onClick={() => setSelected(project)}
+                    data-preview={project.category || project.title}
+                    data-preview-img={project.thumbnail_url || ""}
+                    className="group grid cursor-pointer grid-cols-[48px_1fr] items-center gap-4 border-b border-dashed border-black py-9 transition-all duration-300 hover:bg-[#81F211] hover:pl-6 md:grid-cols-[96px_1fr_220px_110px] md:gap-7"
+                  >
+                    <span className="text-outline-thin text-3xl font-extrabold leading-none tracking-[-0.06em] md:text-[44px]">
+                      {String(index + 1).padStart(2, "0")}
                     </span>
-                    <div className="relative z-10 flex items-end justify-between">
-                      <h2 className="text-xl font-bold leading-snug text-white">
+                    <div>
+                      <h3 className="text-[clamp(26px,3.8vw,56px)] font-extrabold leading-[1.02] tracking-[-0.055em] text-black">
                         {project.title}
-                      </h2>
-                      {!project.thumbnail_url && (
-                        <Image
-                          src={project.symbol_url}
-                          alt={project.title}
-                          width={56}
-                          height={56}
-                          className="ml-4 h-14 w-14 flex-shrink-0 opacity-70 transition-opacity group-hover:opacity-90"
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* white bottom panel */}
-                  <div className="flex h-[200px] flex-col p-7">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a0a0a0]">
-                      {project.category}
-                    </p>
-                    <div className="mt-3 h-px w-8 bg-[#1a1a1a]/15" />
-                    <div className="relative mt-3 flex-1 overflow-hidden">
-                      <p className="line-clamp-5 text-[13px] leading-[1.8] text-[#6b6b6b]">
+                      </h3>
+                      <p className="mt-3.5 line-clamp-3 max-w-[660px] text-[15px] leading-[1.9] text-[#666666] group-hover:text-black/70">
                         {project.description}
                       </p>
-                      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
                     </div>
-                    <span className="mt-auto inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-widest text-[#1a1a1a]/40 transition-colors group-hover:text-[#1a1a1a]/80">
-                      자세히 보기
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
+                    <p className="hidden text-[10px] font-extrabold tracking-[0.2em] text-[#666666] group-hover:text-black/60 md:block">
+                      {project.category}
+                    </p>
+                    <span className="hidden justify-self-end border border-black px-2.5 py-1.5 text-xs font-extrabold tracking-[0.08em] text-black md:inline-block">
+                      {project.tag}
                     </span>
                   </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

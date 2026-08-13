@@ -5,17 +5,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const sql = getDB();
     const { id } = await params;
-    const { tag, title, category, description, symbol_url, thumbnail_url, gallery_images, display_order } = await req.json();
+    const { tag, title, category, description, symbol_url, thumbnail_url, gallery_images, display_order, status } = await req.json();
     const result = await sql`
       UPDATE projects SET tag=${tag}, title=${title}, category=${category},
         description=${description}, symbol_url=${symbol_url},
-        thumbnail_url=${thumbnail_url ?? null}, gallery_images=${gallery_images ?? '[]'}, display_order=${display_order ?? 0}
+        thumbnail_url=${thumbnail_url ?? null}, gallery_images=${gallery_images ?? '[]'},
+        display_order=${display_order ?? 0}, status=${status ?? 'upcoming'}
       WHERE id=${id} RETURNING *
     ` as Array<Record<string, unknown>>;
     if (result.length === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(result[0]);
   } catch (error) {
-    console.error('DB error:', error);
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

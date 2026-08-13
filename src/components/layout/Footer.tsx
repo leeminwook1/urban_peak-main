@@ -3,51 +3,53 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#e5e0d8] bg-[#f0ebe3]">
-      {/* thin top rule — full width */}
-      <div className="px-8 py-12 md:px-14 lg:px-20">
-        {/* Row 1: logo + nav */}
-        <div className="flex items-start justify-between">
-          <Image
-            src="/images/logos/logo-horizontal.png"
-            alt="urban peak"
-            width={110}
-            height={22}
-            className="h-5 w-auto opacity-50"
-          />
-          <nav className="flex items-center gap-8">
-            <Link
-              href="/story"
-              className="text-[13px] text-[#6b6b6b] transition-colors hover:text-[#111]"
-            >
-              Story
-            </Link>
-            <Link
-              href="/projects"
-              className="text-[13px] text-[#6b6b6b] transition-colors hover:text-[#111]"
-            >
-              Projects
-            </Link>
-            <Link
-              href="/contact"
-              className="text-[13px] text-[#6b6b6b] transition-colors hover:text-[#111]"
-            >
-              Contact
-            </Link>
-          </nav>
-        </div>
-
-        {/* middle rule */}
-        <div className="mt-10 h-px bg-[#1a1a1a]/10" />
-
-        {/* Row 2: tagline + copyright */}
-        <div className="mt-6 flex items-end justify-between">
-          <p className="text-[12px] tracking-wide text-[#1a1a1a]/35">
+    <footer className="border-t border-black bg-[#F5F5F5] px-6 py-[50px]">
+      <div className="mx-auto flex max-w-[1400px] flex-wrap items-start justify-between gap-10">
+        <div>
+          <div className="flex items-center gap-3.5">
+            <Image
+              src="/images/logos/logo-horizontal.png"
+              alt="urban peak"
+              width={110}
+              height={22}
+              className="h-5 w-auto"
+            />
+            <span className="anim-spin-slow inline-block text-[15px] leading-none text-[#81F211]" aria-hidden="true">
+              ✳
+            </span>
+          </div>
+          <p className="mt-3.5 text-[13px] text-[#666666]">
             새로운 장면을 만드는 문화 기획 스튜디오
           </p>
-          <p className="text-[11px] text-[#1a1a1a]/30">
-            &copy; 2025 Urban Peak
+          <p className="mt-[22px] font-mono text-[11px] tracking-[0.14em] text-[#666666]">
+            &copy; 2026 URBAN PEAK
           </p>
+        </div>
+
+        <div className="flex gap-[52px]">
+          <div className="flex flex-col gap-2.5">
+            <span className="text-[10px] font-extrabold tracking-[0.2em] text-black">PAGES</span>
+            <Link href="/story" className="text-[13px] text-[#666666] hover:text-black" data-magnet>
+              Story
+            </Link>
+            <Link href="/projects" className="text-[13px] text-[#666666] hover:text-black" data-magnet>
+              Projects
+            </Link>
+            <Link href="/merchandise" className="text-[13px] text-[#666666] hover:text-black" data-magnet>
+              Merchandise
+            </Link>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            <span className="text-[10px] font-extrabold tracking-[0.2em] text-black">CONTACT</span>
+            <a
+              href="mailto:contact@urbanpeak.kr"
+              className="text-[13px] text-[#666666] hover:text-black"
+              data-magnet
+            >
+              contact@urbanpeak.kr
+            </a>
+            <span className="text-[13px] text-[#666666]">@urbanpeak</span>
+          </div>
         </div>
       </div>
     </footer>

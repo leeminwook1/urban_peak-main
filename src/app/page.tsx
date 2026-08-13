@@ -1,275 +1,229 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import ProjectModal, { ModalProject } from "@/components/ui/ProjectModal";
+import Stamp from "@/components/ui/Stamp";
+import Marquee from "@/components/ui/Marquee";
+import HeroVideoLoop from "@/components/ui/HeroVideoLoop";
 import { defaultProjects, defaultTeamMembers } from "@/lib/data";
 
-interface Project { id: number | string; tag: string; title: string; category: string; description: string; symbol_url: string; thumbnail_url?: string | null; gallery_images?: string | null; display_order: number; }
+interface Project { id: number | string; tag: string; title: string; category: string; description: string; symbol_url: string; thumbnail_url?: string | null; gallery_images?: string | null; display_order: number; status?: string; }
 interface TeamMember { id: number | string; role: string; name: string; description: string; profile_image?: string | null; display_order: number; }
+interface MerchandiseItem { id: number | string; name: string; description: string; image_url: string | null; images: string | null; display_order: number; }
 
-function PillTag({ children }: { children: React.ReactNode }) {
+const TICKER_WORDS = ["NOW BOOKING", "SEOUL 2019—", "공연 · 기록 · 전시 · 클래스", "OPEN CALL", "CULTURE PLANNING", "꼭대기에서 만나요"];
+
+const TILT_CLASSES = [
+  "-rotate-[1.4deg]",
+  "rotate-[1.1deg]",
+  "-rotate-[0.8deg]",
+  "rotate-[1.5deg]",
+  "-rotate-1",
+  "rotate-[0.7deg]",
+];
+
+function CharLine({ text, outline = false, startDelay = 0, trailing }: { text: string; outline?: boolean; startDelay?: number; trailing?: React.ReactNode }) {
+  const chars = Array.from(text);
   return (
-    <span className="inline-block rounded-full border border-[#d4cfc8] bg-white/50 px-3.5 py-1 text-[11px] font-medium uppercase tracking-widest text-[#8a8a8a]">
-      {children}
-    </span>
+    <div className="overflow-hidden pb-[0.08em]">
+      <div className="flex flex-wrap items-center gap-x-[0.02em]">
+        {chars.map((ch, i) => (
+          <span
+            key={i}
+            className={`char-anim text-[clamp(34px,5.5vw,84px)] font-extrabold leading-[0.98] tracking-[-0.06em] ${outline ? "text-outline" : "text-black"}`}
+            style={{ animationDelay: `${startDelay + i * 0.05}s` }}
+          >
+            {ch === " " ? " " : ch}
+          </span>
+        ))}
+        {trailing}
+      </div>
+    </div>
   );
 }
 
 function HeroSection() {
   return (
-    <section className="hero-gradient relative flex min-h-screen flex-col overflow-hidden">
-      {/* Top edge bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="flex items-center justify-between px-8 pt-8 md:px-14 lg:px-20"
-      >
-        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#1a1a1a]/35">
-          문화 기획 스튜디오
-        </span>
-        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#1a1a1a]/35">
-          Seoul · 2019—
-        </span>
-      </motion.div>
+    <section className="relative flex min-h-[calc(100vh-63px)] flex-col justify-center overflow-hidden border-b border-black bg-[#F5F5F5] px-6 pb-28 pt-24 md:pt-20">
+      <HeroVideoLoop />
+      <div className="hatch-bg-anim absolute inset-0" aria-hidden="true" />
+      <div className="lime-glow absolute inset-0" aria-hidden="true" />
 
-      {/* Top rule */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 1.1, delay: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="mx-8 mt-4 h-px origin-left bg-[#1a1a1a]/10 md:mx-14 lg:mx-20"
-      />
+      {/* 원형 회전 텍스트 */}
+      <div className="anim-spin-slow absolute right-9 top-8 hidden h-[120px] w-[120px] md:block" style={{ animationDuration: "18s" }} aria-hidden="true">
+        <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible">
+          <defs>
+            <path id="circ" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
+          </defs>
+          <text style={{ fontSize: "10.5px", fontWeight: 800, letterSpacing: "0.22em", fill: "#000" }}>
+            <textPath href="#circ">URBAN PEAK · CULTURE · SEOUL · 2019 — </textPath>
+          </text>
+        </svg>
+      </div>
+      <div className="anim-spin-reverse absolute right-[78px] top-[76px] hidden text-4xl leading-none text-[#81F211] md:block" aria-hidden="true">✳</div>
 
-      {/* Main content */}
-      <div className="relative flex flex-1 items-center px-8 md:px-14 lg:px-20">
-        {/* Symbol — desktop right side */}
-        <motion.div
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.4, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="pointer-events-none absolute right-8 top-1/2 hidden -translate-y-1/2 md:right-14 lg:right-20 lg:block"
-          aria-hidden="true"
-        >
-          <Image
-            src="/images/logos/symbol-orange.png"
-            alt=""
-            width={440}
-            height={440}
-            className="h-[300px] w-[300px] object-contain opacity-[0.22] xl:h-[380px] xl:w-[380px]"
-          />
-        </motion.div>
+      {/* 떠다니는 심볼 */}
+      <Image src="/images/logos/symbol-orange.png" alt="" width={58} height={58} className="anim-floaty absolute left-[36%] top-[8%] z-0 h-[58px] w-auto" aria-hidden="true" />
+      <Image src="/images/logos/symbol-teal.png" alt="" width={46} height={46} className="anim-floaty absolute right-[27%] top-[13%] z-0 h-[46px] w-auto" style={{ animationDuration: "6.5s" }} aria-hidden="true" />
 
-        {/* Left: text block */}
-        <div className="relative z-10 w-full py-16 md:py-24 lg:max-w-[60%]">
-          {/* Logo mark */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <Image
-              src="/images/logos/logo-horizontal.png"
-              alt="Urban Peak"
-              width={120}
-              height={24}
-              className="h-[22px] w-auto opacity-55"
-              priority
-            />
-          </motion.div>
+      <div className="relative z-10 mx-auto w-full max-w-[1400px]">
+        <CharLine text="새로운 장면을" />
+        <CharLine text="만드는" startDelay={0.35} />
+        <CharLine
+          text="문화 기획 스튜디오"
+          outline
+          startDelay={0.5}
+          trailing={
+            <span className="char-anim ml-[0.08em] text-[clamp(24px,3.6vw,56px)] leading-none text-[#81F211]" style={{ animationDelay: "1s" }}>
+              <span className="anim-spin-slow inline-block">✳</span>
+            </span>
+          }
+        />
 
-          {/* H1 */}
-          <motion.h1
-            initial={{ opacity: 0, y: 36 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="mt-8 text-[2.8rem] font-bold leading-[1.08] text-[#111] md:text-[3.8rem] lg:text-[5rem] xl:text-[5.8rem]"
-            style={{ letterSpacing: "-0.035em" }}
-          >
-            새로운 장면을<br />만드는<br />문화 기획 스튜디오
-          </motion.h1>
-
-          {/* Short rule accent */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.7, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="mt-8 h-px w-10 origin-left bg-[#1a1a1a]/30"
-          />
-
-          {/* Subtext */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.75 }}
-            className="mt-5 max-w-sm text-[14px] leading-[1.85] text-[#6b6b6b]"
-          >
-            다양한 방식의 콘텐츠로 공연과 기록, 창작을 넘나들며<br className="hidden sm:block" />
-            도시의 취향들을 연결해 장면으로 만듭니다.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="mt-9 flex items-center gap-3"
-          >
-            <Link
-              href="/projects"
-              className="rounded-full bg-[#1a1a1a] px-7 py-3.5 text-[13px] font-medium text-white transition-all duration-200 hover:bg-[#2e2e2e]"
-            >
-              프로젝트 보기
-            </Link>
-            <Link
-              href="/story"
-              className="rounded-full border border-[#1a1a1a]/18 px-7 py-3.5 text-[13px] font-medium text-[#1a1a1a] transition-all duration-200 hover:border-[#1a1a1a]/35 hover:bg-white/50"
-            >
-              어반피크 이야기
-            </Link>
-          </motion.div>
+        <div className="mt-10 flex flex-wrap items-end justify-between gap-8">
+          <AnimatedSection>
+            <p className="max-w-[440px] text-[15px] font-semibold leading-[1.85] tracking-[-0.02em] text-black md:text-base">
+              다양한 방식의 콘텐츠로 공연과 기록, 창작을 넘나들며<br />
+              도시의 취향들을 연결해{" "}
+              <span className="inline-block -rotate-[1.5deg] border border-black bg-[#81F211] px-2">장면</span>
+              으로 만듭니다.
+            </p>
+          </AnimatedSection>
+          <AnimatedSection delay={0.15}>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/projects"
+                data-magnet
+                data-magnetic
+                className="inline-block border border-black bg-black px-9 py-[17px] text-[13px] font-extrabold tracking-[0.08em] text-[#81F211]"
+              >
+                프로젝트 보기
+              </Link>
+              <Link
+                href="/story"
+                data-magnet
+                data-magnetic
+                className="inline-block border border-black bg-white px-9 py-[17px] text-[13px] font-extrabold tracking-[0.08em] text-black shadow-[4px_4px_0_#81F211] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+              >
+                어반피크 이야기
+              </Link>
+            </div>
+          </AnimatedSection>
         </div>
-
-        {/* Vertical label — far right, desktop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.1 }}
-          className="pointer-events-none absolute bottom-12 right-8 hidden md:right-14 lg:right-6 lg:block"
-          aria-hidden="true"
-        >
-          <span
-            className="block text-[9px] font-semibold uppercase tracking-[0.32em] text-[#1a1a1a]/22"
-            style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-          >
-            Urban Peak · Culture Studio
-          </span>
-        </motion.div>
       </div>
 
-      {/* Bottom rule */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 1.1, delay: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="mx-8 h-px origin-left bg-[#1a1a1a]/10 md:mx-14 lg:mx-20"
-      />
-
-      {/* Bottom bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1.0 }}
-        className="flex items-center justify-between px-8 pb-7 pt-4 md:px-14 lg:px-20"
-      >
-        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1a1a1a]/30">
+      {/* 하단 바 */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t border-dashed border-black bg-white px-6 py-[13px]">
+        <span className="font-mono text-[11px] font-extrabold tracking-[0.2em] text-[#666666]">
           공연 · 기록 · 전시 · 클래스
         </span>
-        <motion.div
-          animate={{ y: [0, 4, 0] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-          className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1a1a1a]/30"
-        >
-          <span>스크롤</span>
-          <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true">
-            <path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </motion.div>
-      </motion.div>
+        <span className="anim-wave inline-block font-mono text-[11px] font-extrabold tracking-[0.2em] text-black">
+          SCROLL ↓
+        </span>
+      </div>
     </section>
   );
 }
 
-function ProjectCard({ project, onClick }: { project: Project; onClick: () => void }) {
+function ProjectRow({ project, index, onClick }: { project: Project; index: number; onClick: () => void }) {
+  const num = String(index + 1).padStart(2, "0");
   return (
     <div
-      className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
       onClick={onClick}
+      data-preview={project.category || project.title}
+      data-preview-img={project.thumbnail_url || ""}
+      className="group grid cursor-pointer grid-cols-[48px_1fr] items-center gap-4 border-b border-dashed border-black py-8 transition-all duration-300 hover:bg-[#81F211] hover:pl-6 md:grid-cols-[96px_1fr_220px_110px] md:gap-7 md:py-[34px]"
     >
-      {/* Dark top */}
-      <div className="relative flex h-48 items-end justify-between bg-[#1a1a2e] p-6">
-        {project.thumbnail_url && (
-          <Image
-            src={project.thumbnail_url}
-            alt={project.title}
-            fill
-            className="object-cover opacity-60"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-[#1a1a2e]/60 to-transparent" />
-        <div className="relative z-10 flex-1">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
-            {project.tag}
-          </span>
-          <h3 className="mt-1.5 text-lg font-bold leading-snug text-white">
-            {project.title}
-          </h3>
-        </div>
-        {!project.thumbnail_url && (
-          <Image
-            src={project.symbol_url}
-            alt={project.title}
-            width={60}
-            height={60}
-            className="relative z-10 ml-4 h-12 w-12 flex-shrink-0 opacity-75 transition-opacity group-hover:opacity-95"
-          />
-        )}
-      </div>
-      {/* White bottom */}
-      <div className="flex h-[180px] flex-col p-6">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a0a0a0]">
-          {project.category}
+      <span className="text-outline-thin text-3xl font-extrabold leading-none tracking-[-0.06em] md:text-[44px]">
+        {num}
+      </span>
+      <div>
+        <h3 className="text-[clamp(26px,3.6vw,52px)] font-extrabold leading-[1.04] tracking-[-0.055em] text-black">
+          {project.title}
+        </h3>
+        <p className="mt-3 line-clamp-2 max-w-[640px] text-sm leading-[1.85] text-[#666666] group-hover:text-black/70">
+          {project.description}
         </p>
-        <div className="relative mt-3 flex-1 overflow-hidden">
-          <p className="line-clamp-4 text-[13px] leading-relaxed text-[#6b6b6b]">
-            {project.description}
-          </p>
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent" />
-        </div>
-        <span className="mt-auto inline-flex items-center gap-1 text-[13px] font-medium text-[#1a1a1a] opacity-60 transition-opacity group-hover:opacity-100">
-          자세히 보기
-          <span aria-hidden="true">&rarr;</span>
-        </span>
       </div>
+      <p className="hidden text-[10px] font-extrabold tracking-[0.2em] text-[#666666] group-hover:text-black/60 md:block">
+        {project.category}
+      </p>
+      <span className="hidden justify-self-end border border-black px-2.5 py-1.5 text-xs font-extrabold tracking-[0.08em] text-black md:inline-block">
+        {project.tag}
+      </span>
+    </div>
+  );
+}
+
+function EmptyRows({ message }: { message: string }) {
+  return (
+    <div className="mt-9 border border-dashed border-black p-14 text-center">
+      <span className="anim-spin-slow inline-block text-3xl text-[#81F211]">✳</span>
+      <p className="mt-3.5 text-sm font-semibold text-[#666666]">{message}</p>
     </div>
   );
 }
 
 function ProjectsSection({ projects }: { projects: Project[] }) {
   const [selected, setSelected] = useState<Project | null>(null);
-  const displayed = projects.slice(0, 3);
+  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
+
+  const upcomingProjects = projects.filter((p) => !p.status || p.status === "upcoming");
+  const pastProjects = projects.filter((p) => p.status === "past");
+  const tabProjects = activeTab === "upcoming" ? upcomingProjects : pastProjects;
 
   return (
-    <section className="px-5 py-24 md:py-32">
-      <div className="mx-auto max-w-6xl">
+    <section className="px-6 py-24 md:py-[130px]">
+      <div className="mx-auto max-w-[1400px]">
         <AnimatedSection>
-          <PillTag>진행 프로젝트</PillTag>
-          <h2 className="mt-4 text-2xl font-bold tracking-tight text-[#1a1a1a] md:text-3xl">
-            어반피크가 함께 하는 프로젝트
-          </h2>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <Stamp>진행 프로젝트</Stamp>
+              <h2 className="mt-[22px] text-[clamp(30px,4vw,54px)] font-extrabold tracking-[-0.05em] text-black">
+                어반피크가 함께 하는 프로젝트
+              </h2>
+            </div>
+            <Link
+              href="/projects"
+              data-magnet
+              data-magnetic
+              className="flex-shrink-0 border border-black px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-black shadow-[3px_3px_0_#81F211] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"
+            >
+              모든 프로젝트 →
+            </Link>
+          </div>
+
+          {/* 탭 */}
+          <div className="mt-8 flex gap-2.5">
+            <button
+              onClick={() => setActiveTab("upcoming")}
+              data-magnet
+              className={`border border-black px-[22px] py-2.5 text-xs font-extrabold tracking-[0.1em] text-black transition-colors ${activeTab === "upcoming" ? "bg-[#81F211]" : "bg-white"}`}
+            >
+              진행 예정 · 현재
+            </button>
+            <button
+              onClick={() => setActiveTab("past")}
+              data-magnet
+              className={`border border-black px-[22px] py-2.5 text-xs font-extrabold tracking-[0.1em] text-black transition-colors ${activeTab === "past" ? "bg-[#81F211]" : "bg-white"}`}
+            >
+              지난 프로젝트
+            </button>
+          </div>
         </AnimatedSection>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {displayed.map((project, index) => (
-            <AnimatedSection key={project.id} delay={index * 0.08}>
-              <ProjectCard project={project} onClick={() => setSelected(project)} />
-            </AnimatedSection>
-          ))}
-        </div>
-
-        <AnimatedSection delay={0.25} className="mt-8 text-center">
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1a1a1a] opacity-50 transition-opacity hover:opacity-90"
-          >
-            모든 프로젝트 보기
-            <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </AnimatedSection>
+        {tabProjects.length === 0 ? (
+          <EmptyRows message={activeTab === "upcoming" ? "진행 예정 프로젝트가 없습니다." : "지난 프로젝트가 없습니다."} />
+        ) : (
+          <div className="mt-9 border-t border-black">
+            {tabProjects.map((project, index) => (
+              <ProjectRow key={project.id} project={project} index={index} onClick={() => setSelected(project)} />
+            ))}
+          </div>
+        )}
       </div>
 
       <ProjectModal project={selected as ModalProject | null} onClose={() => setSelected(null)} />
@@ -279,47 +233,57 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
 
 function TeamSection({ members }: { members: TeamMember[] }) {
   return (
-    <section className="px-5 py-24 md:py-32">
-      <div className="mx-auto max-w-6xl">
-        <AnimatedSection>
-          <PillTag>Team</PillTag>
-          <h2 className="mt-4 text-2xl font-bold tracking-tight text-[#1a1a1a] md:text-3xl">
-            어반피크를 만드는 사람들
-          </h2>
-        </AnimatedSection>
+    <section id="team" className="border-t border-black bg-[#81F211] px-6 pb-[120px] pt-[110px]">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <AnimatedSection>
+            <h2 className="text-[clamp(30px,4vw,54px)] font-extrabold leading-[1.02] tracking-[-0.05em] text-black">
+              어반피크를<br />만드는 사람들
+            </h2>
+          </AnimatedSection>
+          <Stamp variant="white">TEAM</Stamp>
+        </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-[54px] grid gap-6 md:grid-cols-3">
           {members.map((member, index) => (
-            <AnimatedSection key={member.id} delay={index * 0.08}>
-              <div className="rounded-2xl bg-white p-8 shadow-sm">
-                {member.profile_image && (
-                  <img 
-                    src={member.profile_image} 
-                    alt={member.name} 
-                    className="mx-auto mb-4 h-20 w-20 rounded-full object-cover"
-                  />
-                )}
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a0a0a0]">
-                  {member.role}
-                </p>
-                <h3 className="mt-2 text-2xl font-bold text-[#1a1a1a]">
+            <AnimatedSection key={member.id} delay={index * 0.08} className="h-full">
+              <div
+                className={`group relative flex h-full cursor-default flex-col overflow-hidden border border-black bg-white p-6 pb-7 transition-all duration-300 hover:rotate-0 hover:-translate-y-2 hover:shadow-[8px_8px_0_#000] ${TILT_CLASSES[index % TILT_CLASSES.length]}`}
+              >
+                <span className="dash-strip absolute left-0 right-0 top-0 h-1.5" aria-hidden="true" />
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-outline-thin text-[64px] font-extrabold leading-none tracking-[-0.06em] transition-colors group-hover:text-[#81F211]" style={{ WebkitTextStroke: "1.5px #000" }}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="mt-1 border border-black bg-[#81F211] px-2 py-1 text-right text-[9px] font-extrabold leading-relaxed tracking-[0.18em] text-black">
+                    {member.role}
+                  </span>
+                </div>
+                <h3 className="mt-7 text-[clamp(28px,2.8vw,38px)] font-extrabold tracking-[-0.05em] text-black">
                   {member.name}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#6b6b6b]">
-                  {member.description}
-                </p>
+                <div className="mt-3.5 border-t border-dashed border-black" />
+                <p className="mt-3.5 flex-1 text-sm leading-[1.9] text-[#666666]">{member.description}</p>
+                <div className="mt-6 flex items-center justify-between">
+                  <span className="font-mono text-[10px] font-extrabold tracking-[0.2em] text-[#666666]">
+                    URBAN PEAK CREW
+                  </span>
+                  <span className="anim-spin-slow inline-block text-base leading-none text-[#81F211]" aria-hidden="true">
+                    ✳
+                  </span>
+                </div>
               </div>
             </AnimatedSection>
           ))}
         </div>
 
-        <AnimatedSection delay={0.2} className="mt-8">
+        <AnimatedSection delay={0.2} className="mt-9">
           <Link
             href="/story"
-            className="inline-flex items-center gap-1 text-[13px] font-medium text-[#1a1a1a] opacity-50 transition-opacity hover:opacity-90"
+            data-magnet
+            className="border-b-2 border-black pb-1 text-[13px] font-extrabold tracking-[0.1em] text-black"
           >
-            팀 이야기 더 보기
-            <span aria-hidden="true">&rarr;</span>
+            팀 이야기 더 보기 →
           </Link>
         </AnimatedSection>
       </div>
@@ -327,32 +291,86 @@ function TeamSection({ members }: { members: TeamMember[] }) {
   );
 }
 
-function ContactCTA() {
+function MerchandiseSection({ items }: { items: MerchandiseItem[] }) {
   return (
-    <section className="px-5 pb-24 md:pb-32">
-      <div className="mx-auto max-w-6xl">
+    <section className="border-t border-black px-6 py-24 md:py-[110px]">
+      <div className="mx-auto max-w-[1400px]">
         <AnimatedSection>
-          <div className="rounded-3xl bg-[#1a1a2e] px-8 py-16 text-center md:py-20">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-white/40">
-              Contact
-            </p>
-            <h2 className="mt-4 text-2xl font-bold text-white md:text-3xl">
-              함께 만들고 싶은 장면이 있나요?
-            </h2>
-            <p className="mt-3 text-sm text-white/50">
-              다양한 방식의 협업을 열려 있습니다.
-            </p>
-            <div className="mt-8">
-              <Link
-                href="/contact"
-                className="inline-block rounded-full bg-white px-8 py-3 text-[13px] font-medium text-[#1a1a2e] transition-opacity hover:opacity-85"
-              >
-                협업 제안하기
-              </Link>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <Stamp>MERCHANDISE</Stamp>
+              <h2 className="mt-[22px] text-[clamp(30px,4vw,54px)] font-extrabold tracking-[-0.05em] text-black">
+                어반피크 굿즈
+              </h2>
             </div>
+            <Link
+              href="/merchandise"
+              data-magnet
+              data-magnetic
+              className="flex-shrink-0 border border-black px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-black shadow-[3px_3px_0_#81F211] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"
+            >
+              모든 굿즈 →
+            </Link>
           </div>
         </AnimatedSection>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {items.slice(0, 3).map((item, index) => {
+            let imgs: string[] = [];
+            try { imgs = JSON.parse(item.images || "[]"); } catch { imgs = []; }
+            if (imgs.length === 0 && item.image_url) imgs = [item.image_url];
+            return (
+              <AnimatedSection key={item.id} delay={index * 0.08}>
+                <div
+                  className={`border border-black bg-white px-3.5 pb-6 pt-3.5 transition-all duration-300 hover:rotate-0 hover:-translate-y-2 hover:shadow-[8px_8px_0_#81F211] ${TILT_CLASSES[index % TILT_CLASSES.length]}`}
+                >
+                  <div className="placeholder-stripes relative aspect-[4/3] overflow-hidden border border-black">
+                    {imgs.length > 0 ? (
+                      <Image src={imgs[0]} alt={item.name} fill className="object-cover" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <span className="font-mono text-[11px] font-bold tracking-[0.16em] text-[#666666]">이미지 없음</span>
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="mt-4 text-lg font-extrabold tracking-[-0.03em] text-black">{item.name}</h3>
+                  {item.description && (
+                    <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-[#666666]">{item.description}</p>
+                  )}
+                </div>
+              </AnimatedSection>
+            );
+          })}
+        </div>
       </div>
+    </section>
+  );
+}
+
+function ContactCTA() {
+  return (
+    <section className="px-6 pb-[170px] pt-[110px]">
+      <AnimatedSection>
+        <div className="relative mx-auto max-w-[1000px] border border-black bg-[#F5F5F5] px-10 py-[72px] text-center">
+          <span className="dash-strip absolute -left-px -top-px right-[-1px] h-2" aria-hidden="true" />
+          <span className="anim-spin-reverse absolute right-[26px] top-[26px] text-[44px] leading-none text-[#81F211]" aria-hidden="true">✳</span>
+          <Stamp>CONTACT</Stamp>
+          <p className="mt-[34px] text-[clamp(32px,5.2vw,72px)] font-extrabold leading-[1.04] tracking-[-0.055em] text-black">
+            함께 만들고 싶은<br />장면이 있나요?
+          </p>
+          <p className="mt-5 text-sm font-semibold text-[#666666]">다양한 방식의 협업에 열려 있습니다.</p>
+          <div className="mt-8">
+            <Link
+              href="/contact"
+              data-magnet
+              data-magnetic
+              className="inline-block border border-black bg-[#81F211] px-[42px] py-[18px] text-[13px] font-extrabold tracking-[0.08em] text-black shadow-[4px_4px_0_#000] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+            >
+              협업 제안하기
+            </Link>
+          </div>
+        </div>
+      </AnimatedSection>
     </section>
   );
 }
@@ -360,10 +378,12 @@ function ContactCTA() {
 export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>(defaultProjects as Project[]);
   const [members, setMembers] = useState<TeamMember[]>(defaultTeamMembers as TeamMember[]);
+  const [merchandise, setMerchandise] = useState<MerchandiseItem[]>([]);
 
   useEffect(() => {
     fetch("/api/projects").then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setProjects(d); }).catch(() => {});
     fetch("/api/team").then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setMembers(d); }).catch(() => {});
+    fetch("/api/merchandise").then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setMerchandise(d); }).catch(() => {});
   }, []);
 
   return (
@@ -371,6 +391,8 @@ export default function HomePage() {
       <HeroSection />
       <ProjectsSection projects={projects} />
       <TeamSection members={members} />
+      <Marquee items={TICKER_WORDS} variant="light" />
+      {merchandise.length > 0 && <MerchandiseSection items={merchandise} />}
       <ContactCTA />
     </>
   );
