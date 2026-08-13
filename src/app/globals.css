@@ -26,6 +26,18 @@
     background-color: #81F211;
     color: #000;
   }
+
+  /* 손그림 컨셉 — 사방 보더(class "border")를 가진 요소의 모서리를
+     비대칭 radius로 삐뚤빼뚤하게. 패턴을 번갈아 써서 손맛을 낸다. */
+  [class~="border"][class*="border-black"]:not([class*="rounded-full"]) {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  }
+  [class~="border"][class*="border-black"]:not([class*="rounded-full"]):nth-child(even) {
+    border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  }
+  [class~="border"][class*="border-black"]:not([class*="rounded-full"]):nth-child(3n) {
+    border-radius: 225px 15px 255px 15px / 15px 255px 15px 225px;
+  }
 }
 
 @keyframes spin-slow {
