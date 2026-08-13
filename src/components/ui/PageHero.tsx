@@ -50,7 +50,33 @@ export default function PageHero({
           <div className="absolute inset-0 bg-black/45" />
         </>
       ) : (
-        <div className="hatch-bg absolute inset-0" aria-hidden="true" />
+        <>
+          <div className="hatch-bg absolute inset-0" aria-hidden="true" />
+          {/* 떠다니는 손그림 심볼 */}
+          <Image
+            src="/images/logos/symbol-orange.png"
+            alt=""
+            width={64}
+            height={64}
+            className="anim-floaty absolute right-[13%] top-[24%] z-0 h-14 w-auto md:h-16"
+            aria-hidden="true"
+          />
+          <Image
+            src="/images/logos/symbol-teal.png"
+            alt=""
+            width={48}
+            height={48}
+            className="anim-floaty absolute right-[6%] top-[52%] z-0 h-10 w-auto md:h-12"
+            style={{ animationDuration: "6.5s" }}
+            aria-hidden="true"
+          />
+          <span
+            className="anim-spin-reverse absolute right-[22%] top-[58%] hidden text-3xl leading-none text-[#81F211] md:block"
+            aria-hidden="true"
+          >
+            ✳
+          </span>
+        </>
       )}
 
       <div className="relative mx-auto max-w-[1400px]">
