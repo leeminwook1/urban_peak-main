@@ -6,21 +6,25 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#faf8f5]">
-      <header className="bg-[#1a1a2e] text-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/admin" className="text-lg font-semibold tracking-wide hover:opacity-80">
-            Urban Peak Admin
+    <div className="min-h-screen bg-white">
+      <header className="hand-line-b bg-black">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
+          <Link
+            href="/admin"
+            className="flex items-center gap-2.5 font-mono text-sm font-extrabold tracking-[0.18em] text-white hover:text-[#81F211]"
+          >
+            <span className="anim-spin-slow inline-block leading-none text-[#81F211]" aria-hidden="true">✳</span>
+            URBAN PEAK ADMIN
           </Link>
-          <nav className="hidden items-center gap-1 md:flex">
-            <Link href="/admin/pages" className="rounded-lg px-3 py-1.5 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white">페이지 설정</Link>
-            <Link href="/admin/projects" className="rounded-lg px-3 py-1.5 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white">프로젝트</Link>
-            <Link href="/admin/team" className="rounded-lg px-3 py-1.5 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white">팀원</Link>
-            <Link href="/admin/merchandise" className="rounded-lg px-3 py-1.5 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white">굿즈</Link>
+          <nav className="hidden items-center gap-1.5 md:flex">
+            <Link href="/admin/pages" className="px-3 py-1.5 text-xs font-extrabold tracking-[0.1em] text-white/70 transition-colors hover:bg-[#81F211] hover:text-black">페이지 설정</Link>
+            <Link href="/admin/projects" className="px-3 py-1.5 text-xs font-extrabold tracking-[0.1em] text-white/70 transition-colors hover:bg-[#81F211] hover:text-black">프로젝트</Link>
+            <Link href="/admin/team" className="px-3 py-1.5 text-xs font-extrabold tracking-[0.1em] text-white/70 transition-colors hover:bg-[#81F211] hover:text-black">팀원</Link>
+            <Link href="/admin/merchandise" className="px-3 py-1.5 text-xs font-extrabold tracking-[0.1em] text-white/70 transition-colors hover:bg-[#81F211] hover:text-black">굿즈</Link>
           </nav>
           <Link
             href="/"
-            className="text-sm text-white/50 transition-colors hover:text-white"
+            className="border border-[#81F211] bg-black px-3.5 py-1.5 text-xs font-extrabold tracking-[0.1em] text-[#81F211] transition-colors hover:bg-[#81F211] hover:text-black"
           >
             사이트 보기 →
           </Link>
