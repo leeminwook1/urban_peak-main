@@ -13,7 +13,7 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://urbanpeak-seven.vercel.app"),
+  metadataBase: new URL("https://urbanpeak.co.kr"),
   title: {
     default: "Urban Peak — 새로운 장면을 만드는 문화 기획 스튜디오",
     template: "%s | Urban Peak",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ko_KR",
-    url: "https://urbanpeak-seven.vercel.app",
+    url: "https://urbanpeak.co.kr",
     siteName: "Urban Peak",
     title: "Urban Peak — 새로운 장면을 만드는 문화 기획 스튜디오",
     description:
