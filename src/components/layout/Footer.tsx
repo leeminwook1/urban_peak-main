@@ -61,9 +61,6 @@ export default function Footer() {
         <p className="text-[12px] leading-[1.9] text-[#666666]">
           어반피크(URBANPEAK) · 대표자: 진하림 · 사업자등록번호: 487-18-02651
         </p>
-        <p className="mt-1 text-[12px] leading-[1.9] text-[#666666]">
-          지출증빙용으로 현금영수증 발행 부탁드립니다
-        </p>
       </div>
     </footer>
   );
