@@ -42,11 +42,11 @@ export default function Footer() {
           <div className="flex flex-col gap-2.5">
             <span className="text-[10px] font-extrabold tracking-[0.2em] text-black">CONTACT</span>
             <a
-              href="mailto:contact@urbanpeak.kr"
+              href="mailto:urbanpeak2020@gmail.com"
               className="text-[13px] text-[#666666] hover:text-black"
               data-magnet
             >
-              contact@urbanpeak.kr
+              urbanpeak2020@gmail.com
             </a>
             <span className="text-[13px] text-[#666666]">@urbanpeak</span>
           </div>

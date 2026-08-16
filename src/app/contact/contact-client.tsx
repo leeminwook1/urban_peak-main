@@ -33,11 +33,11 @@ export default function ContactClient({ setting }: { setting: PageSetting | null
               <span className="text-[10px] font-extrabold tracking-[0.2em] text-black">EMAIL</span>
               <p className="mt-2">
                 <a
-                  href="mailto:contact@urbanpeak.kr"
+                  href="mailto:urbanpeak2020@gmail.com"
                   data-magnet
                   className="text-[clamp(19px,1.9vw,26px)] font-extrabold tracking-[-0.035em] text-black"
                 >
-                  contact@urbanpeak.kr
+                  urbanpeak2020@gmail.com
                 </a>
               </p>
             </div>
