@@ -38,6 +38,9 @@ export default function Footer() {
             <Link href="/merchandise" className="text-[13px] text-[#666666] hover:text-black" data-magnet>
               Merchandise
             </Link>
+            <Link href="/contact" className="text-[13px] text-[#666666] hover:text-black" data-magnet>
+              Contact
+            </Link>
           </div>
           <div className="flex flex-col gap-2.5">
             <span className="text-[10px] font-extrabold tracking-[0.2em] text-black">CONTACT</span>
