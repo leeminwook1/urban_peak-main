@@ -97,7 +97,6 @@ function HeroSection() {
         <CharLine text="만드는" startDelay={0.35} />
         <CharLine
           text="문화 기획 스튜디오"
-          outline
           startDelay={0.5}
           trailing={
             <span className="char-anim ml-[0.08em] text-[clamp(24px,3.6vw,56px)] leading-none text-[#81F211]" style={{ animationDelay: "1s" }}>

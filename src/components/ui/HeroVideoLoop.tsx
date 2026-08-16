@@ -105,7 +105,7 @@ export default function HeroVideoLoop() {
       {/* 라이브 배지 — 현재 재생 중인 영상 번호 */}
       <div className="absolute left-6 top-7 z-20 flex -rotate-[1.5deg] items-center gap-2 border border-black bg-white px-3 py-[7px] font-mono text-[11px] font-extrabold tracking-[0.2em] text-black">
         <span className="anim-blink inline-block h-[7px] w-[7px] rounded-full border border-black bg-[#81F211]" />
-        배경 영상 루프 {String(slots[front] + 1).padStart(2, "0")}/{String(VIDEOS.length).padStart(2, "0")}
+        OUR PROJECT {String(slots[front] + 1).padStart(2, "0")}/{String(VIDEOS.length).padStart(2, "0")}
       </div>
     </>
   );
