@@ -72,6 +72,10 @@
   0%, 100% { transform: translateY(0) rotate(-2deg); }
   50% { transform: translateY(-16px) rotate(2deg); }
 }
+@keyframes loadbar {
+  from { width: 0%; }
+  to { width: 100%; }
+}
 
 @layer utilities {
   .anim-spin-slow { animation: spin-slow 8s linear infinite; }
@@ -81,6 +85,7 @@
   .anim-floaty { animation: floaty 5s ease-in-out infinite; }
   .anim-marq { animation: marq 24s linear infinite; }
   .anim-marq-r { animation: marqR 28s linear infinite; }
+  .anim-loadbar { animation: loadbar linear forwards; }
 
   /* 사선 해칭 배경 */
   .hatch-bg {
@@ -160,6 +165,7 @@
   .anim-floaty,
   .anim-marq,
   .anim-marq-r,
+  .anim-loadbar,
   .hatch-bg-anim {
     animation: none;
   }

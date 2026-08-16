@@ -102,10 +102,20 @@ export default function HeroVideoLoop() {
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white/55 to-transparent" />
       </div>
 
-      {/* 라이브 배지 — 현재 재생 중인 영상 번호 */}
-      <div className="absolute left-6 top-7 z-20 flex -rotate-[1.5deg] items-center gap-2 border border-black bg-white px-3 py-[7px] font-mono text-[11px] font-extrabold tracking-[0.2em] text-black">
-        <span className="anim-blink inline-block h-[7px] w-[7px] rounded-full border border-black bg-[#81F211]" />
-        OUR PROJECT {String(slots[front] + 1).padStart(2, "0")}/{String(VIDEOS.length).padStart(2, "0")}
+      {/* 라이브 배지 — 현재 재생 중인 영상 번호 + 다음 전환까지 로딩 바 */}
+      <div className="absolute left-6 top-7 z-20 -rotate-[1.5deg] overflow-hidden border border-black bg-white font-mono text-[11px] font-extrabold tracking-[0.2em] text-black">
+        <div className="flex items-center gap-2 px-3 py-[7px]">
+          <span className="anim-blink inline-block h-[7px] w-[7px] rounded-full border border-black bg-[#81F211]" />
+          OUR PROJECT {String(slots[front] + 1).padStart(2, "0")}/{String(VIDEOS.length).padStart(2, "0")}
+        </div>
+        {mounted && (
+          <span
+            key={`${front}-${slots[front]}`}
+            className="anim-loadbar absolute bottom-0 left-0 h-[3px] bg-[#81F211]"
+            style={{ animationDuration: `${SWITCH_MS}ms` }}
+            aria-hidden="true"
+          />
+        )}
       </div>
     </>
   );
