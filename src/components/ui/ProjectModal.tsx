@@ -220,7 +220,7 @@ export default function ProjectModal({
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <span className="absolute left-0 top-0 bg-black px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] text-[#81F211]">
+                    <span className="absolute left-2 top-2 bg-black px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] text-[#81F211]">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                   </div>

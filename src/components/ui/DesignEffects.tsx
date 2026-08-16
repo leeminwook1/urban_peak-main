@@ -178,7 +178,7 @@ export default function DesignEffects() {
         <div className="placeholder-stripes relative aspect-[3/2] overflow-hidden border border-black shadow-[8px_8px_0_#81F211]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img ref={previewImgRef} alt="" className="absolute inset-0 hidden h-full w-full object-cover" />
-          <div className="absolute left-0 top-0 z-10 bg-black px-2.5 py-[5px] text-[10px] font-extrabold tracking-[0.16em] text-[#81F211]">
+          <div className="absolute left-2 top-2 z-10 bg-black px-2.5 py-[5px] text-[10px] font-extrabold tracking-[0.16em] text-[#81F211]">
             NOW LOOKING
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
