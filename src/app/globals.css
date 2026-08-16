@@ -142,8 +142,13 @@
     color: transparent;
     -webkit-text-stroke: 2px #000;
   }
+  /* 번호 칩 — 라임 박스 안 검정 숫자 */
   .text-outline-thin {
-    color: #DCDCDC;
+    color: #000;
+    background: #81F211;
+    padding: 0.1em 0.16em;
+    width: fit-content;
+    height: fit-content;
   }
 }
 
