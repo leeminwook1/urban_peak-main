@@ -212,3 +212,22 @@ h1,h2,h3,h4,.wd-header,.wd-header button,.wd-header a,.editorial-label,.route-st
 @media(max-width:680px) and (prefers-reduced-motion:no-preference){
   .journey-track{transform:translateX(calc(88vw - clamp(0,calc(var(--progress) / .79),1) * 450vw))}
 }
+
+/* OUR PROJECTS: rise together into a row, then remain in view while scrolling. */
+@media(min-width:681px) and (prefers-reduced-motion:no-preference){
+  .project-sticky-scene{height:280svh}
+  .project-sticky-scene .project-sticky-card{top:18%;width:19%;height:66%;left:var(--column);z-index:1;--rise:clamp(0,calc((var(--progress) - var(--delay)) / .42),1);transform:translateY(calc((1 - var(--rise)) * (88svh + var(--offset))));transition:scale .35s ease,box-shadow .35s ease;will-change:transform}
+  .project-sticky-card-3{--column:1%;--delay:0;--offset:0svh}
+  .project-sticky-card-2{--column:20.5%;--delay:.045;--offset:8svh}
+  .project-sticky-card-1{--column:40%;--delay:.09;--offset:16svh}
+  .project-sticky-card-4{--column:59.5%;--delay:.135;--offset:8svh}
+  .project-sticky-card-5{--column:79%;--delay:.18;--offset:0svh}
+  .project-sticky-scene .project-sticky-card:hover,.project-sticky-scene .project-sticky-card:focus-visible{z-index:4;scale:1.035;box-shadow:0 14px 32px #0003}
+  .project-sticky-card img{transition:transform .5s ease}
+  .project-sticky-card:hover img,.project-sticky-card:focus-visible img{transform:scale(1.04)}
+}
+/* Begin the next layer while the matching background still fills the screen. */
+@media(prefers-reduced-motion:no-preference){
+  .capability-journey{margin-top:-110svh}
+  .journey-pin{clip-path:inset(0 0 calc((1 - clamp(0,calc(var(--progress) * 40),1))*100%) 0)}
+}
