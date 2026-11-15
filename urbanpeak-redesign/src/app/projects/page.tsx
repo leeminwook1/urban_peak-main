@@ -1,0 +1,2 @@
+import PageBanner from '@/components/PageBanner';import {ProjectGrid} from '@/components/Projects';import {SectionLabel,ContactCTA} from '@/components/Sections';export const metadata={title:'Projects'};
+export default function Projects(){return <><PageBanner label="OUR PROJECTS" title={<>우리가 만든<br/>장면들.</>} copy="공연과 콘텐츠, 참여형 프로그램. 서로 다른 형식으로 이어지는 어반피크의 프로젝트." frame="02"/><section className="section projects-list"><ProjectGrid/></section><ContactCTA/></>}
