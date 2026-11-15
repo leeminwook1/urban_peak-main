@@ -231,3 +231,6 @@ h1,h2,h3,h4,.wd-header,.wd-header button,.wd-header a,.editorial-label,.route-st
   .capability-journey{margin-top:-110svh}
   .journey-pin{clip-path:inset(0 0 calc((1 - clamp(0,calc(var(--progress) * 40),1))*100%) 0)}
 }
+@media(min-width:681px) and (prefers-reduced-motion:no-preference){
+  .project-logo-marquee{opacity:clamp(0,calc((.60 - var(--progress)) / .15),1)}
+}
