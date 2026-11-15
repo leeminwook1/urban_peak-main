@@ -192,3 +192,23 @@ h1,h2,h3,h4,.wd-header,.wd-header button,.wd-header a,.editorial-label,.route-st
   @keyframes project-logo-scroll{to{transform:translateX(-50%)}}
 }
 @media(min-width:681px) and (prefers-reduced-motion:reduce){.project-logo-marquee{display:none}}
+
+/* Keep the revealed still identical across the studio-to-capabilities handoff. */
+@media(prefers-reduced-motion:no-preference){
+  .panorama-slice{--delay:.68;clip-path:inset(0 calc((1 - clamp(0,calc((var(--progress) - var(--delay))*6.25),1))*100%) 0 0)}
+  .panorama-slice:nth-child(2){--delay:.72}
+  .panorama-slice:nth-child(3){--delay:.70}
+  .panorama-slice:nth-child(4){--delay:.74}
+  .panorama-slice:nth-child(5){--delay:.73}
+  .journey-background{transform:none;filter:blur(5px)}
+  .journey-tint{backdrop-filter:none}
+}
+@media(min-width:1025px) and (prefers-reduced-motion:no-preference){
+  .journey-track{transform:translateX(calc(100vw - clamp(0,calc(var(--progress) / .82),1) * 350vw))}
+}
+@media(min-width:681px) and (max-width:1024px) and (prefers-reduced-motion:no-preference){
+  .journey-track{transform:translateX(calc(100vw - clamp(0,calc(var(--progress) / .82),1) * 370vw))}
+}
+@media(max-width:680px) and (prefers-reduced-motion:no-preference){
+  .journey-track{transform:translateX(calc(88vw - clamp(0,calc(var(--progress) / .79),1) * 450vw))}
+}
