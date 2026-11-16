@@ -1,3 +1,34 @@
-import {SectionLabel} from '@/components/Sections';import {getMerchandise} from '@/lib/data';
-export const metadata={title:'Merchandise'};
-export default async function Merchandise(){const m=await getMerchandise();return <><section className="section page-title"><SectionLabel n="01">MERCHANDISE</SectionLabel><h1>어반피크 굿즈</h1><p className="page-intro">{m.subtitle}</p></section><section className="section projects-list">{m.banner&&<img className="merch-banner" src={m.banner} alt={m.title}/>}<div className="merch-grid">{m.goods.map(g=><article key={g.id}><div className="merch-gallery">{g.images.map(u=><img key={u} src={u} alt={g.name} loading="lazy"/>)}</div><h2>{g.name}</h2><details><summary>제품 정보 보기</summary><p className="preserve">{g.description}</p></details></article>)}</div></section></>}
+import { SectionLabel } from '@/components/Sections';
+import { getMerchandise } from '@/lib/data';
+export const metadata = { title: 'Merchandise' };
+export default async function Merchandise() {
+  const m = await getMerchandise();
+  return (
+    <>
+      <section className="section page-title">
+        <SectionLabel n="01">MERCHANDISE</SectionLabel>
+        <h1>어반피크 굿즈</h1>
+        <p className="page-intro">{m.subtitle}</p>
+      </section>
+      <section className="section projects-list">
+        {m.banner && <img className="merch-banner" src={m.banner} alt={m.title} />}
+        <div className="merch-grid">
+          {m.goods.map(g => (
+            <article key={g.id}>
+              <div className="merch-gallery">
+                {g.images.map(u => (
+                  <img key={u} src={u} alt={g.imageAlts[u] || g.name} loading="lazy" />
+                ))}
+              </div>
+              <h2>{g.name}</h2>
+              <details>
+                <summary>제품 정보 보기</summary>
+                <p className="preserve">{g.description}</p>
+              </details>
+            </article>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}

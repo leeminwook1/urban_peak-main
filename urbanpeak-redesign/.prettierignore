@@ -1,0 +1,7 @@
+original-source/
+source-data/
+public/
+src/lib/*.json
+.next/
+.next-dev/
+.private/

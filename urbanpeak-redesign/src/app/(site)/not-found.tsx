@@ -1,1 +1,12 @@
-import Link from 'next/link';export default function NotFound(){return <section className="section page-title"><p className="eyebrow">404</p><h1>장면을 찾을 수 없습니다.</h1><Link className="text-link" href="/">홈으로 돌아가기 ↗</Link></section>}
+import Link from 'next/link';
+export default function NotFound() {
+  return (
+    <section className="section page-title">
+      <p className="eyebrow">404</p>
+      <h1>장면을 찾을 수 없습니다.</h1>
+      <Link className="text-link" href="/">
+        홈으로 돌아가기 ↗
+      </Link>
+    </section>
+  );
+}

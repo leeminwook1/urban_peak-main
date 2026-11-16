@@ -1,1 +1,4 @@
-import {redirect} from 'next/navigation';export default function Story(){redirect('/studio')}
+import { redirect } from 'next/navigation';
+export default function Story() {
+  redirect('/studio');
+}

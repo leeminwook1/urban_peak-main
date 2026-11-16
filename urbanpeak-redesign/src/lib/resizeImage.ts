@@ -9,7 +9,7 @@ export async function resizeImage(
   file: File,
   maxWidth = 1920,
   maxHeight = 1080,
-  quality = 0.85
+  quality = 0.85,
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -36,26 +36,31 @@ export async function resizeImage(
       canvas.height = height;
 
       const ctx = canvas.getContext('2d');
-      if (!ctx) { resolve(file); return; }
+      if (!ctx) {
+        resolve(file);
+        return;
+      }
 
       ctx.drawImage(img, 0, 0, width, height);
 
       canvas.toBlob(
-        (blob) => {
-          if (!blob) { resolve(file); return; }
-          const resized = new File(
-            [blob],
-            file.name.replace(/\.[^.]+$/, '.jpg'),
-            { type: 'image/jpeg' }
-          );
+        blob => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const resized = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
           resolve(resized);
         },
         'image/jpeg',
-        quality
+        quality,
       );
     };
 
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
     img.src = url;
   });
 }

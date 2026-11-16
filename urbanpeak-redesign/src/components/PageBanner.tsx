@@ -1,1 +1,23 @@
-export default function PageBanner({label,title,copy,frame}:{label:string,title:React.ReactNode,copy:React.ReactNode,frame:string}){return <section className="inner-banner"><img src={`/images/frames/hero-${frame}-scene.jpg`} alt="어반피크 영상에서 추출한 장면"/><div className="inner-banner-shade"/><div className="inner-banner-content"><span className="eyebrow">{label}</span><h1>{title}</h1><p>{copy}</p></div></section>}
+export default function PageBanner({
+  label,
+  title,
+  copy,
+  frame,
+}: {
+  label: string;
+  title: React.ReactNode;
+  copy: React.ReactNode;
+  frame: string;
+}) {
+  return (
+    <section className="inner-banner">
+      <img src={`/images/frames/hero-${frame}-scene.jpg`} alt="어반피크 영상에서 추출한 장면" />
+      <div className="inner-banner-shade" />
+      <div className="inner-banner-content">
+        <span className="eyebrow">{label}</span>
+        <h1>{title}</h1>
+        <p>{copy}</p>
+      </div>
+    </section>
+  );
+}
