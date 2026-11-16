@@ -7,3 +7,6 @@ node_modules/
 .DS_Store
 
 .next-dev/
+
+# Admin image uploads in local development (Blob is used when BLOB_READ_WRITE_TOKEN is set)
+public/uploads/

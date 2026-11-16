@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
-import content from '@/lib/content.json';
+import type {Step} from '@/lib/types';
 
-export function Header(){
+export function Header({process}:{process:Step[]}){
   const path=usePathname();
   const [open,setOpen]=useState(false);
   const [scrolled,setScrolled]=useState(false);
@@ -50,8 +50,8 @@ export function Header(){
       <button className="wd-mobile-menu" onClick={()=>setOpen(!open)} aria-expanded={open} aria-controls="studio-menu">{open?'Close −':'Menu +'}</button>
       {open&&<div className="wd-mega-menu" id="studio-menu"><div className="mega-photo"><img src="/images/frames/hero-03-scene.jpg" alt="어반피크 쇼릴의 무대 장면"/></div><nav aria-label="전체 메뉴"><Link href="/studio">Studio <span>01 ↗</span></Link><Link href="/projects">Projects <span>02 ↗</span></Link><Link href="/crew">Crew <span>03 ↗</span></Link><Link href="/contact">Contact <span>04 ↗</span></Link><p>서로 다른 창작이 하나의 장면으로.</p></nav><button className="mega-close" onClick={()=>setOpen(false)} aria-label="전체 메뉴 닫기">Close ×</button></div>}
     </header>
-    <button ref={trigger} tabIndex={path==='/'&&!scrolled?-1:0} aria-hidden={path==='/'&&!scrolled} className={`work-tab ${path==='/'&&!scrolled?'is-concealed':''}`} onClick={()=>{setDrawer(true);setOpen(false)}} aria-expanded={drawer} aria-controls="work-drawer">How we work <span>+</span></button>
-    {drawer&&<div className="work-overlay" onClick={()=>{setDrawer(false);trigger.current?.focus()}}><aside ref={drawerRef} id="work-drawer" role="dialog" aria-modal="true" aria-labelledby="work-title" onClick={e=>e.stopPropagation()}><button ref={close} className="work-close" onClick={()=>{setDrawer(false);trigger.current?.focus()}}>Close ×</button><h2 id="work-title">HOW WE WORK</h2><div className="work-steps">{content.process.map(([name,desc],i)=><div key={name}><h3>{i+1}. {name}</h3><p>{desc}</p></div>)}</div><Link href="/contact" onClick={()=>setDrawer(false)}>함께 만들 장면 이야기하기 ↗</Link></aside></div>}
+    <button ref={trigger} tabIndex={path==='/'&&!scrolled?-1:0} aria-hidden={path==='/'&&!scrolled} className={`work-tab ${path==='/'&&!scrolled?'is-concealed':''} ${hidden&&!drawer?'is-tucked':''}`} onClick={()=>{setDrawer(true);setOpen(false)}} aria-expanded={drawer} aria-controls="work-drawer">How we work <span>+</span></button>
+    {drawer&&<div className="work-overlay" onClick={()=>{setDrawer(false);trigger.current?.focus()}}><aside ref={drawerRef} id="work-drawer" role="dialog" aria-modal="true" aria-labelledby="work-title" onClick={e=>e.stopPropagation()}><button ref={close} className="work-close" onClick={()=>{setDrawer(false);trigger.current?.focus()}}>Close ×</button><h2 id="work-title">HOW WE WORK</h2><div className="work-steps">{process.map(({name,desc},i)=><div key={name}><h3>{i+1}. {name}</h3><p>{desc}</p></div>)}</div><Link href="/contact" onClick={()=>setDrawer(false)}>함께 만들 장면 이야기하기 ↗</Link></aside></div>}
   </>;
 }
 
