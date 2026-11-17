@@ -1,0 +1,1 @@
+import type {MetadataRoute} from 'next';import projects from '@/lib/projects.json';export default function sitemap():MetadataRoute.Sitemap {const base=process.env.NEXT_PUBLIC_SITE_URL||'https://urbanpeak.co.kr';return ['', '/studio','/projects','/crew','/contact','/merchandise',...projects.map(p=>'/projects/'+p.id)].map(p=>({url:base+p}))}
