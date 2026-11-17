@@ -10,3 +10,6 @@ node_modules/
 
 # Admin image uploads in local development (Blob is used when BLOB_READ_WRITE_TOKEN is set)
 public/uploads/
+.vercel
+
+.vercel

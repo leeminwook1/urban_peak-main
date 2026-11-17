@@ -1,0 +1,8 @@
+.env*
+!.env.example
+.private/
+.next/
+.next-dev/
+node_modules/
+public/uploads/
+.vercel/
