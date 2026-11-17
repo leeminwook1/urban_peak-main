@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 const file = (i: number) => `hero-${String(i + 1).padStart(2, '0')}`;
 
 export default function Hero() {
-  const [indices, setIndices] = useState([0, 1]);
+  const [indices, setIndices] = useState([4, 5]);
   const [active, setActive] = useState(0);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(4);
   const [paused, setPaused] = useState(false);
   const [reduced, setReduced] = useState(false);
   const refs = useRef<(HTMLVideoElement | null)[]>([]);
+  const ready = useRef([false, false]);
   const switching = useRef(false);
   const transition = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -26,8 +27,8 @@ export default function Hero() {
     refs.current.forEach((v, i) => {
       if (!v) return;
       v.muted = true;
-      if (paused || reduced) v.pause();
-      else if (i === active) v.play().catch(() => {});
+      if (paused || reduced || i !== active) v.pause();
+      else v.play().catch(() => {});
     });
   }, [active, paused, reduced]);
   useEffect(() => {
@@ -36,12 +37,10 @@ export default function Hero() {
       if (switching.current) return;
       const other = 1 - active;
       const video = refs.current[other];
-      if (!video) return;
+      if (!video || !ready.current[other]) return;
       switching.current = true;
+      video.currentTime = 0;
       video.muted = true;
-      try {
-        video.currentTime = 0;
-      } catch {}
       video
         .play()
         .then(() => {
@@ -49,12 +48,12 @@ export default function Hero() {
           setCount(indices[other]);
           transition.current = setTimeout(() => {
             refs.current[active]?.pause();
+            ready.current[active] = false;
             setIndices(prev => prev.map((n, i) => (i === active ? (indices[other] + 1) % 12 : n)));
             switching.current = false;
           }, 1000);
         })
         .catch(() => {
-          setIndices(prev => prev.map((n, i) => (i === other ? (n + 1) % 12 : n)));
           switching.current = false;
         });
     }, 6500);
@@ -83,6 +82,12 @@ export default function Hero() {
               playsInline
               loop
               preload="auto"
+              onCanPlay={() => {
+                ready.current[i] = true;
+              }}
+              onError={() => {
+                ready.current[i] = false;
+              }}
               aria-hidden="true"
             />
           ))}
@@ -105,7 +110,7 @@ export default function Hero() {
         />
         <div className="hero-meta">
           <span>
-            OUR PROJECT <b>{String(count + 1).padStart(2, '0')}</b> / 12
+            OUR PROJECT <b>{String(((count + 8) % 12) + 1).padStart(2, '0')}</b> / 12
           </span>
           <a href="#intro">SCROLL TO EXPLORE ↓</a>
           <button

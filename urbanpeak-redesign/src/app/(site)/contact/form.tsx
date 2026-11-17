@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-export default function ContactForm() {
+export default function ContactForm({ disabled = false }: { disabled?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [done, setDone] = useState(false);
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (busy || done) return;
+    if (busy || done || disabled) return;
     const form = e.currentTarget;
     setBusy(true);
     setStatus('');
@@ -107,8 +107,8 @@ export default function ContactForm() {
         </span>
       </label>
       <div className="form-actions">
-        <button type="submit" disabled={busy || done}>
-          {busy ? '접수 중…' : done ? '접수됨' : '문의 접수하기 ↗'}
+        <button type="submit" disabled={busy || done || disabled}>
+          {disabled ? '문의 양식 준비 중' : busy ? '접수 중…' : done ? '접수됨' : '문의 접수하기 ↗'}
         </button>
       </div>
       {status && (

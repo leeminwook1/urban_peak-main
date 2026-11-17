@@ -1,16 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
 import type { Project, SiteContent, Step } from '@/lib/types';
 
 export function ProjectAccordion({ selected }: { selected: Project[] }) {
-  const [active, setActive] = useState(0);
   return (
-    <section className="wd-projects" id="selected-projects">
+    <section
+      className="wd-projects stack-projects"
+      id="selected-projects"
+      aria-labelledby="stack-projects-title"
+    >
       <div className="wd-section-heading" data-reveal>
         <span className="eyebrow">THE SCENES WE CREATE</span>
-        <h2>OUR PROJECTS</h2>
+        <h2 id="stack-projects-title">OUR PROJECTS</h2>
         <Link href="/projects">모든 프로젝트 보기 ↗</Link>
       </div>
       <div className="project-sticky-scene" data-scroll-scene aria-label="주요 프로젝트">
@@ -47,53 +49,48 @@ export function ProjectAccordion({ selected }: { selected: Project[] }) {
           ))}
         </div>
       </div>
-      <div className="project-accordion" aria-label="주요 프로젝트">
+      <p className="stack-guide">
+        SCROLL TO EXPLORE <span aria-hidden="true">↓</span>
+      </p>
+      <div className="stack-project-list">
         {selected.map((p, i) => (
-          <article
-            key={p.id}
-            className={`accordion-card ${i === active ? 'is-active' : ''}`}
-            onMouseEnter={() => setActive(i)}
-            onFocusCapture={() => setActive(i)}
-          >
-            {p.images[0] && <img src={p.images[0]} alt={p.title + ' 프로젝트 기록'} loading="lazy" />}
-            <div className="accordion-shade" />
-            <button
-              className="accordion-select"
-              aria-expanded={i === active}
-              aria-controls={'project-panel-' + p.id}
-              onClick={() => setActive(i)}
-            >
-              <span className="accordion-number">0{i + 1}</span>
-              <span className="accordion-name">{p.title}</span>
-              <span className="sr-only"> 펼치기</span>
-            </button>
-            <div className="accordion-content" id={'project-panel-' + p.id} inert={i !== active}>
-              <Link className="accordion-detail" href={'/projects/' + p.id}>
-                View project <span>↗</span>
-              </Link>
-              <div>
-                <div className="accordion-meta">
-                  <span>{p.format}</span>
-                  <span>{p.date}</span>
+          <article className="stack-project-card" key={p.id} style={{ zIndex: i + 1 }} aria-label={p.title}>
+            <div className="stack-project-media">
+              {p.images?.[0] ? (
+                <img src={p.images[0]} alt={p.title + ' 프로젝트 기록'} loading="lazy" />
+              ) : (
+                <div className="stack-project-placeholder">URBAN PEAK / PROJECT ARCHIVE</div>
+              )}
+              <div className="stack-project-shade" />
+              <div className="stack-project-top">
+                <span>
+                  SELECTED WORK / 0{i + 1} — 0{selected.length}
+                </span>
+                <span>{p.format}</span>
+              </div>
+              <div className="stack-project-info">
+                <div className="stack-project-index">
+                  0{i + 1} <span>/ 0{selected.length}</span>
                 </div>
-                <p>{p.intro}</p>
-                <small>{p.status === '확인 중' ? '진행 상태 확인 중' : p.status}</small>
+                <div className="stack-project-title">
+                  <h3>{p.title}</h3>
+                  <p>{p.intro}</p>
+                </div>
+                <Link
+                  href={'/projects/' + p.id}
+                  className="stack-project-open"
+                  aria-label={p.title + ' 프로젝트 자세히 보기'}
+                >
+                  VIEW PROJECT <span aria-hidden="true">↗</span>
+                </Link>
               </div>
             </div>
           </article>
         ))}
       </div>
-      <div className="accordion-tabs" aria-label="프로젝트 선택">
-        {selected.map((p, i) => (
-          <button
-            key={p.id}
-            aria-pressed={active === i}
-            onClick={() => setActive(i)}
-            aria-label={p.title + ' 선택'}
-          >
-            0{i + 1}
-          </button>
-        ))}
+      <div className="stack-project-end">
+        <span>END OF SELECTED WORKS</span>
+        <Link href="/projects">EXPLORE ALL PROJECTS ↗</Link>
       </div>
     </section>
   );
@@ -201,6 +198,57 @@ export function StudioScenes({ content }: { content: SiteContent }) {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+      {/* Mobile uses ONE sticky canvas for the Studio-to-Capabilities journey.
+        Two stacked 100svh sticky sections caused the visible horizontal seam. */}
+      <section
+        className="mobile-studio-journey"
+        data-scroll-scene
+        aria-label="스튜디오 소개 및 다섯 가지 역량"
+      >
+        <div className="mobile-studio-pin">
+          <img
+            className="mobile-studio-bg"
+            src="/images/frames/hero-06-scene.jpg"
+            alt="어반피크 프로젝트 영상 기록"
+            loading="lazy"
+          />
+          <div className="mobile-studio-shade" />
+          <div className="mobile-studio-intro">
+            <span className="eyebrow">URBAN PEAK / STUDIO</span>
+            <h2>OUR STUDIO</h2>
+            <p>서로 다른 창작이 하나의 장면으로.</p>
+            <Link href="/studio">Explore the studio ↗</Link>
+          </div>
+          <div className="mobile-cap-heading">
+            <h2>OUR CAPABILITIES</h2>
+            <span>SCROLL TO DISCOVER →</span>
+          </div>
+          <div className="mobile-cap-track">
+            {content.capabilities.map((c, i) => (
+              <article className="mobile-cap-card" key={c.name}>
+                <img src={frames[i]} alt="어반피크 프로젝트 영상 기록 장면" loading="lazy" />
+                <div className="mobile-cap-card-shade" />
+                <div className="mobile-cap-card-top">
+                  <span className="eyebrow">0{i + 1} / 05</span>
+                  <h3>{c.name}</h3>
+                </div>
+                <div className="mobile-cap-card-parts">
+                  {c.parts.map(({ name, desc }) => (
+                    <div key={name}>
+                      <h4>{name}</h4>
+                      <p>{desc}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link className="mobile-cap-link" href="/crew#capabilities">
+                  역량 자세히 보기 ↗
+                </Link>
+              </article>
+            ))}
+          </div>
+          <span className="mobile-cap-caption">VIDEO STILLS / URBAN PEAK</span>
         </div>
       </section>
     </>

@@ -29,7 +29,11 @@ export default function Motion() {
         const rect = el.getBoundingClientRect();
         if (rect.top > h || rect.bottom < 0) return;
         const progress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - h)));
-        el.style.setProperty('--progress', media.matches ? '0' : String(progress));
+        // Smoothstep softens the hero's entrance/exit without hijacking native scrolling.
+        const eased = el.classList.contains('hero-runway')
+          ? progress * progress * (3 - 2 * progress)
+          : progress;
+        el.style.setProperty('--progress', media.matches ? '0' : String(eased));
       });
       readings.forEach(el => {
         const rect = el.getBoundingClientRect();
