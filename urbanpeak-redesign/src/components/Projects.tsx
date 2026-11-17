@@ -1,0 +1,75 @@
+'use client';
+import Link from 'next/link';
+import { useState } from 'react';
+import type { Project } from '@/lib/types';
+export function ProjectGrid({ projects, featured = false }: { projects: Project[]; featured?: boolean }) {
+  const [format, setFormat] = useState('All');
+  const [status, setStatus] = useState('전체 상태');
+  const list = featured
+    ? projects.filter(p => [9, 7, 8, 4].includes(p.id))
+    : projects.filter(
+        p => (format === 'All' || p.format === format) && (status === '전체 상태' || p.status === status),
+      );
+  return (
+    <>
+      {!featured && (
+        <div className="filters">
+          <div className="filter-buttons" aria-label="프로젝트 형식">
+            {['All', 'Live', 'Sessions', 'Archive'].map(f => (
+              <button key={f} onClick={() => setFormat(f)} aria-pressed={format === f}>
+                {f}
+                <sup>{f === 'All' ? projects.length : projects.filter(p => p.format === f).length}</sup>
+              </button>
+            ))}
+          </div>
+          <label className="status-filter">
+            진행 상태
+            <select value={status} onChange={e => setStatus(e.target.value)}>
+              {['전체 상태', '예정', '진행 중', '종료', '후속 작업 중', '확인 중'].map(s => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
+      <div className="project-grid">
+        {list.map((p, i) => (
+          <Link
+            className={`project-card ${!featured && list.length % 2 === 1 && i === list.findIndex(x => x.images.length) ? 'is-wide' : ''}`}
+            key={p.id}
+            href={'/projects/' + p.id}
+          >
+            <div className="project-image">
+              {p.images.length ? (
+                <img
+                  src={p.images[0]}
+                  alt={p.imageAlts[p.images[0]] || p.title + ' 프로젝트 기록'}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="missing-image">
+                  <img src="/images/logos/logo-white.png" alt="" width="990" height="248" />
+                  <span>{p.title}</span>
+                  <small>이미지 자료 확인 중</small>
+                </div>
+              )}
+              <span className="project-open" aria-hidden="true">
+                ↗
+              </span>
+            </div>
+            <div className="project-caption">
+              <span className="eyebrow">
+                {p.format} / {p.date}
+              </span>
+              <span className="project-status">
+                {p.status === '확인 중' ? '진행 상태 확인 중' : p.status}
+              </span>
+            </div>
+            <h3>{p.title}</h3>
+          </Link>
+        ))}
+      </div>
+      {!list.length && <div className="empty">해당 조건으로 등록된 프로젝트가 없습니다.</div>}
+    </>
+  );
+}

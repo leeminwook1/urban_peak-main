@@ -1,0 +1,78 @@
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { getProject, getPublishedProjects } from '@/lib/data';
+import { SectionLabel, ContactCTA } from '@/components/Sections';
+export async function generateStaticParams() {
+  return (await getPublishedProjects()).map(p => ({ id: String(p.id) }));
+}
+export default async function Project({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const p = await getProject(Number(id));
+  if (!p) notFound();
+  const info = p.info;
+  const get = (pattern: string) => Object.entries(info).find(([k]) => k.includes(pattern))?.[1];
+  return (
+    <>
+      <section className="section page-title detail-title">
+        <Link className="eyebrow" href="/projects">
+          ← ALL PROJECTS
+        </Link>
+        <div className="detail-meta">
+          <span>{p.format}</span>
+          <span>{p.date}</span>
+          <span>{p.status === '확인 중' ? '진행 상태 확인 중' : p.status}</span>
+        </div>
+        <h1>{p.title}</h1>
+        <p className="page-intro">{p.intro}</p>
+        {p.note && <p className="note">{p.note}</p>}
+      </section>
+      <section className="section detail-gallery" aria-label="대표 결과물">
+        {p.images.length ? (
+          p.images.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt={p.imageAlts[src] || p.title + ' 기록 ' + (i + 1)}
+              loading={i ? 'lazy' : 'eager'}
+            />
+          ))
+        ) : (
+          <p className="note">대표 결과물 자료를 확인 중입니다.</p>
+        )}
+      </section>
+      <section className="section project-details">
+        <SectionLabel n="01">어반피크 담당 범위</SectionLabel>
+        <p>세부 담당 범위 확인 중</p>
+        <dl>
+          <dt>주최</dt>
+          <dd>{get('클라이언트 / 주최') || '확인 중'}</dd>
+          <dt>주관</dt>
+          <dd>확인 중</dd>
+          <dt>제작팀</dt>
+          <dd>확인 중</dd>
+          <dt>어반피크 담당 범위</dt>
+          <dd>확인 중</dd>
+        </dl>
+        <SectionLabel n="02">핵심 기획 · 연출 판단</SectionLabel>
+        <h2>기획 의도</h2>
+        <p className="preserve">{get('기획 의도') || '자료 확인 중'}</p>
+        <h3>핵심 콘셉트</h3>
+        <p className="preserve">{get('핵심 컨셉') || '자료 확인 중'}</p>
+        <SectionLabel n="03">주요 제작 결과</SectionLabel>
+        <p className="preserve">{get('주요 콘텐츠') || '자료 확인 중'}</p>
+        <p className="preserve">{get('프로그램 구성') || get('공연 구성') || ''}</p>
+        <SectionLabel n="04">분야별 크레딧</SectionLabel>
+        <p>개인별 크레딧과 어반피크 참여 범위 확인 중</p>
+        <SectionLabel n="05">프로젝트 전체 참여 인원</SectionLabel>
+        <p className="preserve">{get('참여 인원 및 역할') || '확인 중'}</p>
+        {p.raw && (
+          <details>
+            <summary>기존 프로젝트 자료 전체 보기</summary>
+            <p className="preserve">{p.raw}</p>
+          </details>
+        )}
+      </section>
+      <ContactCTA />
+    </>
+  );
+}
