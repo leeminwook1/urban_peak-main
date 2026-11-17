@@ -1,7 +1,6 @@
 import { SectionLabel } from '@/components/Sections';
 import ContactForm from './form';
 export const metadata = { title: 'Contact' };
-export const dynamic = 'force-dynamic';
 export default function Contact() {
   return (
     <div className="wd-contact-page">
@@ -31,11 +30,7 @@ export default function Contact() {
           </ul>
         </aside>
         <div>
-          <p className="delivery-note">
-            {process.env.RESEND_API_KEY && process.env.CONTACT_TO && process.env.CONTACT_FROM
-              ? '작성하신 내용은 문의 메일로 전달됩니다.'
-              : '현재 문의는 이 사이트 서버에 저장되며 이메일로는 발송되지 않습니다. 빠른 문의는 위 이메일을 이용해 주세요.'}
-          </p>
+          <p className="delivery-note">남겨주신 문의는 담당자가 확인한 뒤 이메일로 답변드립니다.</p>
           <ContactForm />
         </div>
       </section>

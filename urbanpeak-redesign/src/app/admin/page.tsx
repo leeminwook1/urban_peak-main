@@ -5,7 +5,13 @@ import { useEffect, useState } from 'react';
 import { PageHead } from '@/components/admin/kit';
 
 type Status = { mode: 'database' | 'local-file'; blob: boolean; deployed: boolean };
-type Summary = { projects?: number; home?: number; goods?: number; saved: Record<string, string | null> };
+type Summary = {
+  projects?: number;
+  home?: number;
+  goods?: number;
+  inquiries?: { total: number; unread: number };
+  saved: Record<string, string | null>;
+};
 
 export default function Dashboard() {
   const [status, setStatus] = useState<Status | null>(null);
@@ -20,13 +26,25 @@ export default function Dashboard() {
       ['projects', 'content', 'merchandise'].map(k => fetch('/api/admin/docs/' + k).then(r => r.json())),
     )
       .then(([p, c, m]) =>
-        setSummary({
+        setSummary(s0 => ({
+          ...s0,
           projects: p.data?.length,
           home: c.data?.homeProjects?.length,
           goods: m.data?.goods?.length,
           saved: { projects: p.updatedAt, content: c.updatedAt, merchandise: m.updatedAt },
-        }),
+        })),
       )
+      .catch(() => {});
+    fetch('/api/admin/inquiries')
+      .then(r => r.json())
+      .then(b => {
+        if (!b.inquiries) return;
+        const list = b.inquiries as { readAt: string | null }[];
+        setSummary(s => ({
+          ...s,
+          inquiries: { total: list.length, unread: list.filter(i => !i.readAt).length },
+        }));
+      })
       .catch(() => {});
   }, []);
 
@@ -35,6 +53,17 @@ export default function Dashboard() {
       ? new Date(iso).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })
       : '아직 수정 전 (기본 데이터)';
   const cards = [
+    {
+      href: '/admin/inquiries',
+      title: '문의함',
+      desc: 'Contact 폼으로 들어온 문의 확인 · 답장',
+      count: summary.inquiries
+        ? summary.inquiries.unread
+          ? `안 읽음 ${summary.inquiries.unread}건`
+          : `${summary.inquiries.total}건`
+        : '',
+      saved: undefined,
+    },
     {
       href: '/admin/projects',
       title: '프로젝트',
@@ -69,7 +98,7 @@ export default function Dashboard() {
               {c.count && <span className="adm-pill">{c.count}</span>}
             </div>
             <p>{c.desc}</p>
-            <small>마지막 저장: {when(c.saved)}</small>
+            {c.saved !== undefined && <small>마지막 저장: {when(c.saved)}</small>}
           </Link>
         ))}
       </div>

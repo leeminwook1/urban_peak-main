@@ -69,7 +69,9 @@ export async function Leadership({ short = false, photos = false }: { short?: bo
   const content = await getContent();
   return (
     <section className="section">
-      <SectionLabel n={short ? '04' : '01'}>{short ? 'THE PEOPLE BEHIND THE SCENES' : 'LEADERSHIP'}</SectionLabel>
+      <SectionLabel n={short ? '04' : '01'}>
+        {short ? 'THE PEOPLE BEHIND THE SCENES' : 'LEADERSHIP'}
+      </SectionLabel>
       <div className="section-heading">
         <h2>함께 만드는 사람들.</h2>
         {short && (

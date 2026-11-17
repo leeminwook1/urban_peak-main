@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mkdir, open } from 'node:fs/promises';
-import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { INQUIRY_FIELDS, saveInquiry, updateInquiry, type Inquiry } from '@/lib/inquiries';
+import { sendInquiryMail } from '@/lib/inquiry-mail';
 export const runtime = 'nodejs';
 const types = ['', '프로젝트 의뢰', '공동기획', '크루 참여', '기타'];
 export async function POST(req: NextRequest) {
@@ -69,64 +69,34 @@ export async function POST(req: NextRequest) {
       );
     }
   }
-  const dir = process.env.CONTACT_STORAGE_DIR || path.join(process.cwd(), '.private', 'inquiries');
-  const id = randomUUID();
-  const createdAt = new Date().toISOString();
-  const configured = Boolean(
-    process.env.RESEND_API_KEY && process.env.CONTACT_TO && process.env.CONTACT_FROM,
-  );
-  let delivered = false;
-  let deliveryId: string | undefined;
+  const inquiry: Inquiry = {
+    id: randomUUID(),
+    createdAt: new Date().toISOString(),
+    ...(Object.fromEntries(INQUIRY_FIELDS.map(f => [f, data[f]])) as Pick<
+      Inquiry,
+      (typeof INQUIRY_FIELDS)[number]
+    >),
+    source: 'redesign',
+    readAt: null,
+    mailStatus: 'pending',
+    mailError: '',
+  };
   try {
-    await mkdir(dir, { recursive: true, mode: 0o700 });
-    const file = await open(path.join(dir, id + '.json'), 'wx', 0o600);
-    await file.writeFile(JSON.stringify({ id, createdAt, data, status: 'stored' }, null, 2));
-    await file.close();
-    if (configured) {
-      try {
-        const text = Object.entries(data)
-          .filter(([k]) => !['website', 'consent'].includes(k))
-          .map(([k, v]) => `${k}: ${v}`)
-          .join('\n\n');
-        const r = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            'Content-Type': 'application/json',
-            'Idempotency-Key': id,
-          },
-          body: JSON.stringify({
-            from: process.env.CONTACT_FROM,
-            to: [process.env.CONTACT_TO],
-            reply_to: data.email,
-            subject: `[Urban Peak] ${data.type || '문의'} — ${data.name}`,
-            text,
-          }),
-          signal: AbortSignal.timeout(10000),
-        });
-        if (r.ok) {
-          const result = await r.json();
-          delivered = true;
-          deliveryId = result.id;
-        }
-      } catch {
-        /* Stored inquiry remains available when email delivery is unavailable. */
-      }
-    }
-    const f = await open(path.join(dir, id + '.json'), 'w', 0o600);
-    await f.writeFile(
-      JSON.stringify(
-        { id, createdAt, data, status: delivered ? 'provider_accepted' : 'stored', deliveryId },
-        null,
-        2,
-      ),
-    );
-    await f.close();
-    return NextResponse.json({ id, stored: true, delivered }, { status: 201 });
-  } catch {
+    await saveInquiry(inquiry);
+  } catch (e) {
+    console.error('[contact] 문의 저장 실패', e);
     return NextResponse.json(
-      { error: '접수 상태를 확인할 수 없습니다. 이메일로 문의해 주세요.' },
+      { error: '문의를 접수하지 못했습니다. 잠시 후 다시 시도하거나 이메일로 문의해 주세요.' },
       { status: 503 },
     );
   }
+  // The inquiry is safe from here on; mail is best effort and its result is recorded for the admin inbox.
+  const mail = await sendInquiryMail(inquiry, new URL('/admin/inquiries', req.url).toString());
+  await updateInquiry(inquiry.id, { mailStatus: mail.status, mailError: mail.error }).catch(e =>
+    console.error('[contact] 발송 상태 기록 실패', e),
+  );
+  return NextResponse.json(
+    { id: inquiry.id, stored: true, delivered: mail.status === 'sent' },
+    { status: 201 },
+  );
 }

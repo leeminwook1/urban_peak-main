@@ -18,11 +18,7 @@ export default function ContactForm() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || '문의 접수에 실패했습니다.');
-      setStatus(
-        data.delivered
-          ? '문의가 저장되고 이메일 발송 서비스에 접수되었습니다. 실제 수신 여부는 메일 서비스에서 확인됩니다.'
-          : '문의가 서버에 저장되었습니다. 이메일로 발송되지는 않았습니다.',
-      );
+      setStatus('문의가 접수되었습니다. 담당자가 확인한 뒤 남겨주신 이메일로 연락드리겠습니다.');
       setDone(true);
       form.reset();
     } catch (e) {

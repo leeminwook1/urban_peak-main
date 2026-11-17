@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const NAV = [
   { href: '/admin', label: '대시보드' },
+  { href: '/admin/inquiries', label: '문의함' },
   { href: '/admin/projects', label: '프로젝트' },
   { href: '/admin/content', label: '홈 · 스튜디오 · 크루' },
   { href: '/admin/merchandise', label: '굿즈' },
