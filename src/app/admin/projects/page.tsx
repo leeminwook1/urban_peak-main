@@ -52,14 +52,9 @@ export default function AdminProjectsPage() {
     }
   }, []);
 
+  // Access is checked on the server (middleware); reaching this page means the session is valid.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (sessionStorage.getItem("adminAuth") === "ydp12000") {
-        setAuth(true);
-      } else {
-        window.location.href = "/admin";
-      }
-    }
+    setAuth(true);
   }, []);
 
   useEffect(() => { if (auth) load(); }, [auth, load]);

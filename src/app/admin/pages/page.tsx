@@ -27,11 +27,9 @@ export default function AdminPagesPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  // Access is checked on the server (middleware); reaching this page means the session is valid.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (sessionStorage.getItem("adminAuth") === "ydp12000") setAuth(true);
-      else window.location.href = "/admin";
-    }
+    setAuth(true);
   }, []);
 
   useEffect(() => {

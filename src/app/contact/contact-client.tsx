@@ -6,10 +6,32 @@ import PageHero, { PageSetting } from "@/components/ui/PageHero";
 
 export default function ContactClient({ setting }: { setting: PageSetting | null }) {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    if (sending) return;
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || "문의를 보내지 못했습니다.");
+      setSubmitted(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "연결에 실패했습니다. 잠시 후 다시 시도하거나 이메일로 문의해 주세요.",
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -101,14 +123,21 @@ export default function ContactClient({ setting }: { setting: PageSetting | null
                     className="mt-[9px] w-full resize-none border border-black bg-[#F5F5F5] px-[15px] py-3.5 text-[17px] leading-[1.7] text-black outline-none transition-colors placeholder:text-black/25 focus:bg-white focus:shadow-[3px_3px_0_#81F211]"
                   />
                 </div>
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+                {error && (
+                  <p className="text-sm font-bold text-red-600" role="alert">
+                    {error}
+                  </p>
+                )}
                 <div>
                   <button
                     type="submit"
                     data-magnet
                     data-magnetic
-                    className="inline-block border border-black bg-[#81F211] px-[46px] py-[17px] text-[13px] font-extrabold tracking-[0.08em] text-black shadow-[4px_4px_0_#000] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                    disabled={sending}
+                    className="inline-block disabled:opacity-60 border border-black bg-[#81F211] px-[46px] py-[17px] text-[13px] font-extrabold tracking-[0.08em] text-black shadow-[4px_4px_0_#000] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
                   >
-                    보내기 →
+                    {sending ? "보내는 중…" : "보내기 →"}
                   </button>
                 </div>
               </form>
